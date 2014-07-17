@@ -23,8 +23,11 @@ for $land (keys(%val)) {
 		# print "$l[$#l / 2] $land\n";
 
 		$n = $#l + 1;
+		@val = ();
 		for ($i = 0; $i < $n; $i++) {
-			$val[$i] = log($l[$i]);
+			if ($l[$i] != 0) {
+				push @val, log($l[$i] * 13);
+			}
 		}
 
 		$sum = 0;
@@ -40,6 +43,6 @@ for $land (keys(%val)) {
 		$variance = $diffsum / $n;
 		$stddev = sqrt($variance);
 
-		printf("%f %f %f %f %f %s\n", exp($mean - $stddev), exp($mean), exp($mean + $stddev), $stddev, $mean - log($l[$#l / 2]), $land);
+		printf("%f %f %f %f %f %s\n", exp($mean - $stddev), exp($mean), exp($mean + $stddev), exp($stddev), $mean - log($l[$#l / 2]), $land);
 	}
 }
