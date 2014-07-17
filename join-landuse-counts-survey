@@ -1,0 +1,3 @@
+#!/bin/bash
+
+LC_ALL=C join <(LC_ALL=C join <(LC_ALL=C sort landuse-points ) <(LC_ALL=C sort modes-with-geocodes-allday-key | awk '{print $1, $2, $3, $4}')) <(LC_ALL=C sort survey-results | awk '{print $1, $3}')
