@@ -1,0 +1,7 @@
+
+
+
+java shpcat2 PlannedLandUse2006-wgs84.zip | awk -F'|' '{print $1 ":" $26 }' | sed 's/polygon //' > dc-landuse
+
+java shpcat2 Landuse-wgs84.zip | awk -F'|' '{print $6 ":" $8}' | sed 's/polygon //' > la-landuse
+
