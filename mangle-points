@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+while (<>) {
+	chomp;
+	s/ +/ /g;
+
+	($category, $where) = split(/ *: */);
+
+	$category =~ s/ /_/g;
+	@where = split(/,/, $where);
+
+	print "$where[26],$where[27] $category\n";
+}
