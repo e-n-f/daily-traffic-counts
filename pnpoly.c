@@ -7,6 +7,8 @@
 #include <math.h>
 
 #define BUCKET 0.1
+#define FOOT .00000274
+#define SLACK (200 * FOOT)
 
 float g_xmin = 0;
 float g_ymin = 0;
@@ -428,10 +430,41 @@ void process(FILE *f, char *fname) {
 
 				for (pl = t->list; pl != NULL; pl = pl->next) {
 					if (a >= pl->poly->xmin && a <= pl->poly->xmax && b >= pl->poly->ymin && b <= pl->poly->ymax) {
-						// printf("maybe: %f %f in %f %f %f %f\n", a, b,
+						 // printf("maybe: %f %f in %f %f %f %f\n", a, b,
 						//	pl->poly->xmin, pl->poly->ymin, pl->poly->xmax, pl->poly->ymax);
 
 						if (pnpoly(pl->poly->nvert, pl->poly->vertx, pl->poly->verty, a, b)) {
+							printf("%s: %s", pl->poly->description, s);
+							//printf("%f,%f: %s: %s", a, b, pl->poly->description, s);
+							goto next;
+						}
+					}
+				}
+
+				for (pl = t->list; pl != NULL; pl = pl->next) {
+					if (a >= pl->poly->xmin - SLACK && a <= pl->poly->xmax + SLACK && b >= pl->poly->ymin - SLACK && b <= pl->poly->ymax + SLACK) {
+						 // printf("maybe: %f %f in %f %f %f %f\n", a, b,
+						//	pl->poly->xmin, pl->poly->ymin, pl->poly->xmax, pl->poly->ymax);
+
+						if (pnpoly(pl->poly->nvert, pl->poly->vertx, pl->poly->verty, a + 100 * FOOT, b + 100 * FOOT)) {
+							printf("%s: %s", pl->poly->description, s);
+							//printf("%f,%f: %s: %s", a, b, pl->poly->description, s);
+							goto next;
+						}
+
+						if (pnpoly(pl->poly->nvert, pl->poly->vertx, pl->poly->verty, a - 100 * FOOT, b - 100 * FOOT)) {
+							printf("%s: %s", pl->poly->description, s);
+							//printf("%f,%f: %s: %s", a, b, pl->poly->description, s);
+							goto next;
+						}
+
+						if (pnpoly(pl->poly->nvert, pl->poly->vertx, pl->poly->verty, a + 100 * FOOT, b - 100 * FOOT)) {
+							printf("%s: %s", pl->poly->description, s);
+							//printf("%f,%f: %s: %s", a, b, pl->poly->description, s);
+							goto next;
+						}
+
+						if (pnpoly(pl->poly->nvert, pl->poly->vertx, pl->poly->verty, a - 100 * FOOT, b + 100 * FOOT)) {
 							printf("%s: %s", pl->poly->description, s);
 							//printf("%f,%f: %s: %s", a, b, pl->poly->description, s);
 							goto next;
