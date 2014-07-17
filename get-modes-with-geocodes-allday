@@ -1,0 +1,22 @@
+#!/bin/sh
+
+cat ../*/counts*.csv |
+awk -F, '($26 > 0)' |
+sort |
+./estimate-24-hour |
+./sum-modes |
+perl -e 'while (<>) {
+	@modes = split(/ /);
+	@fields = split(/,/);
+	$k = "$fields[25],$fields[26]";
+
+	if ($modes[1] > $max{$k}) {
+		$max{$k} = $modes[1];
+		$out{$k} = $_;
+	}
+}
+
+for $o (keys(%out)) {
+	print $out{$o};
+}
+'
