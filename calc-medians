@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+while (<>) {
+	@f = split(/:/);
+	$land = $f[0];
+
+	$land =~ s/ I / /;
+	$land =~ s/ II / /;
+	$land =~ s/ *$//;
+
+	@v = split(/ /, $f[1]);
+
+	push @{$val{$land}}, $v[3];  # pedestrian
+	# push @{$val{$land}}, $v[2];  # vehicle
+}
+
+for $land (keys(%val)) {
+	@l = @{$val{$land}};
+
+	@l = sort { $a <=> $b } @l;
+
+	if ($#l > 25) {
+		# print "$l[$#l / 2] $land\n";
+
+		$n = $#l + 1;
+		for ($i = 0; $i < $n; $i++) {
+			$val[$i] = log($l[$i]);
+		}
+
+		$sum = 0;
+		for ($i = 0; $i < $n; $i++) {
+			$sum += $val[$i];
+		}
+		$mean = $sum / $n;
+
+		$diffsum = 0;
+		for ($i = 0; $i < $n; $i++) {
+			$diffsum += ($val[$i] - $mean) * ($val[$i] - $mean);
+		}
+		$variance = $diffsum / $n;
+		$stddev = sqrt($variance);
+
+		printf("%f %f %f %f %f %s\n", exp($mean - $stddev), exp($mean), exp($mean + $stddev), $stddev, $mean - log($l[$#l / 2]), $land);
+	}
+}
