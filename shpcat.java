@@ -95,6 +95,20 @@ public class shpcat {
 	    return String.format("%.6f", d);
 	}
 
+	public static double toDoubleN(byte[] ba, int off) {
+	    long l = (((long) (ba[off + 0] & 0xFF)) << 0) |
+		     (((long) (ba[off + 1] & 0xFF)) << 8) |
+		     (((long) (ba[off + 2] & 0xFF)) << 16) |
+		     (((long) (ba[off + 3] & 0xFF)) << 24) |
+		     (((long) (ba[off + 4] & 0xFF)) << 32) |
+		     (((long) (ba[off + 5] & 0xFF)) << 40) |
+		     (((long) (ba[off + 6] & 0xFF)) << 48) |
+		     (((long) (ba[off + 7] & 0xFF)) << 56);
+
+	    double d = Double.longBitsToDouble(l);
+		return d;
+	}
+
 	public static void extract(InputStream shp, InputStream dbf)
 			throws IOException {
 		byte[] shpheader = new byte[100];
@@ -144,7 +158,8 @@ public class shpcat {
 
 			while (flen > 0) {
 				read(dbf, db, dbreclen);
-
+				//System.out.println(new String(db));
+if (true) {
 				int here = 1;
 				for (int i = 0; i < dbflen.length; i++) {
 					String s = new String(db, here, dbflen[i]);
@@ -153,6 +168,7 @@ public class shpcat {
 
 					here += dbflen[i];
 				}
+}
 
 				read(shp, header, 8);
 				flen -= 8;
@@ -161,6 +177,7 @@ public class shpcat {
 				int len = 2 * read32be(header, 4);
 
 				byte[] content = new byte[len];
+				//System.out.println("reading " + len + " bytes");
 				read(shp, content, len);
 				flen -= len;
 
@@ -201,6 +218,8 @@ public class shpcat {
 			int npart = read32le(content, 36);
 			int npoint = read32le(content, 40);
 
+			sb.append("0,0 ");
+
 			for (int i = 0; i < npart; i++) {
 				int off = read32le(content, 44 + 4 * i);
 				int end;
@@ -211,12 +230,24 @@ public class shpcat {
 					end = read32le(content, 44 + 4 * (i + 1));
 				}
 
+				double startx = toDoubleN(content, 44 + 4 * npart + 16 * off);
+				double starty = toDoubleN(content, 52 + 4 * npart + 16 * off);
+
+				double thisx = startx, thisy = starty;
+
 				for (int j = off; j < end; j++) {
 					sb.append(toDouble(content, 44 + 4 * npart + 16 * j) + "," +
 						  toDouble(content, 52 + 4 * npart + 16 * j) + " ");
+
+					thisx = toDoubleN(content, 44 + 4 * npart + 16 * j);
+					thisy = toDoubleN(content, 52 + 4 * npart + 16 * j);
 				}
 
-				sb.append("; ");
+				if (startx != thisx || starty != thisy) {
+					sb.append(startx + "," + starty + " ");
+				}
+
+				sb.append("0,0 ");
 			}
 
 			return sb.toString();
