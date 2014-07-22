@@ -18,6 +18,12 @@ $border = 36;
 $width = 11 * 72 - 2 * $border;
 $height = 8.5 * 72 - 2 * $border;
 
+printf("%.3f %.3f moveto ", $border         , $border          );
+printf("%.3f %.3f lineto ", $border + $width, $border          );
+printf("%.3f %.3f lineto ", $border + $width, $border + $height);
+printf("%.3f %.3f lineto ", $border         , $border + $height);
+printf("%.3f %.3f lineto ", $border         , $border          );
+
 $minx = 0;
 $maxx = 102;
 
