@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+
+print ".1 setlinewidth\n";
+
+$miny = 1;
+
+while (<>) {
+	chomp;
+	($score, $count, $where) = split(/ /);
+
+	push @{$counts{$score}}, $count;
+	if ($count > $maxy) {
+		$maxy = $count;
+	}
+}
+
+$border = 36;
+$width = 11 * 72 - 2 * $border;
+$height = 8.5 * 72 - 2 * $border;
+
+$minx = 0;
+$maxx = 102;
+
+for $x (keys(%counts)) {
+	@s = @{$counts{$x}};
+	@s = sort { $a <=> $b } @s;
+	$n = $#s + 1;
+
+	@y = ();
+	# for $p (.023, .159, .500, .841, .977) {
+	for $p (.125, .250, .500, .750, .875) {
+		push @y, (log($s[$#s * $p]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border;
+	}
+
+	@x = ();
+	for $p ($x - .25, $x, $x + .25) {
+		push @x, ($p - $minx) / ($maxx - $minx) * $width + $border;
+	}
+
+	# box
+	printf("%.3f %.3f moveto ", $x[0], $y[1]);
+	printf("%.3f %.3f lineto ", $x[2], $y[1]);
+	printf("%.3f %.3f lineto ", $x[2], $y[3]);
+	printf("%.3f %.3f lineto ", $x[0], $y[3]);
+	printf("%.3f %.3f lineto ", $x[0], $y[1]);
+
+	# median line
+	printf("%.3f %.3f moveto ", $x[0], $y[2]);
+	printf("%.3f %.3f lineto ", $x[2], $y[2]);
+
+	# lower line
+	printf("%.3f %.3f moveto ", $x[1], $y[1]);
+	printf("%.3f %.3f lineto ", $x[1], $y[0]);
+	printf("%.3f %.3f moveto ", $x[0], $y[0]);
+	printf("%.3f %.3f lineto ", $x[2], $y[0]);
+
+	# upper line
+	printf("%.3f %.3f moveto ", $x[1], $y[3]);
+	printf("%.3f %.3f lineto ", $x[1], $y[4]);
+	printf("%.3f %.3f moveto ", $x[0], $y[4]);
+	printf("%.3f %.3f lineto ", $x[2], $y[4]);
+
+	# printf("%.3f %.3f 2 0 360 arc fill\n", ($x - $minx) / ($maxx - $minx) * $width + $border, (log($s[$#s * .023]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border);
+	# printf("%.3f %.3f 2 0 360 arc fill\n", ($x - $minx) / ($maxx - $minx) * $width + $border, (log($s[$#s * .159]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border);
+	# printf("%.3f %.3f 2 0 360 arc fill\n", ($x - $minx) / ($maxx - $minx) * $width + $border, (log($s[$#s * .500]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border);
+	# printf("%.3f %.3f 2 0 360 arc fill\n", ($x - $minx) / ($maxx - $minx) * $width + $border, (log($s[$#s * .841]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border);
+	# printf("%.3f %.3f 2 0 360 arc fill\n", ($x - $minx) / ($maxx - $minx) * $width + $border, (log($s[$#s * .977]) - log($miny)) / (log($maxy) - log($miny)) * $height + $border);
+
+	print "stroke\n";
+}
