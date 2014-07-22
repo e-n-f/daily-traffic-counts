@@ -1,0 +1,5 @@
+set terminal postscript
+set logscale xy
+set xlabel "Daily pedestrian volume"
+set ylabel "Daily bicycle volume"
+plot "all-modes-allday-bikewalk" using 2:3 ps .5 title "", exp(log(x) * 0.680899)
