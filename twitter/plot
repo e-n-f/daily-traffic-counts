@@ -1,0 +1,7 @@
+set terminal postscript
+set xrange [1:2000]
+set yrange [.1:20000]
+set logscale xy
+set xlabel "Annual (2013) geotagged tweets within 300 feet"
+set ylabel "Daily pedestrian volume"
+plot "modes-for-distances" using 30:33 ps .5 title "", exp(log(x) * 1.23352)
