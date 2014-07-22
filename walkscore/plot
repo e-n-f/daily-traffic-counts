@@ -1,0 +1,7 @@
+set terminal postscript
+set logscale y
+set xlabel "Walk Score"
+set ylabel "Daily pedestrian volume"
+set xrange [0:102]
+set yrange [1:200000]
+plot "matched-allday" using 1:2 ps .5 title "", exp(0.059 * x + 2.56), exp(2.52 * asin((x - 47) / 53) + 5.42)
