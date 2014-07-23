@@ -1,0 +1,10 @@
+set terminal postscript
+set xrange [0:40]
+set yrange [10:200000]
+set logscale y
+set xlabel "Average transit speed (miles per hour)"
+set ylabel "Daily pedestrian volume"
+plot "toronto" using 1:2 title "", exp(9.59395 - 0.129781 * x)
+plot "not-toronto" using 1:2 title "", exp(8.73671 - 0.159755 * x)
+plot "speed-to-count-multicity" using 1:2 title "", exp(8.39169 - 0.0791862 * x)
+plot "toronto" using 1:2 title "Toronto", "not-toronto" using 1:2 title "US cities", exp(8.39169 - 0.0791862 * x)
