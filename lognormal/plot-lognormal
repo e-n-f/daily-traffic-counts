@@ -1,15 +1,21 @@
 #!/usr/bin/perl
 
-$pi = 4 * atan2(1, 1);
+use strict;
+
+my $pi = 4 * atan2(1, 1);
+my $group = "";
+my %val = ();
 
 while (<>) {
 	chomp;
-	s/ .*//;
 
 	if (/^group (.*)/) {
-		$group = 1;
+		$group = $1;
+		print STDERR "group $group\n";
 		next;
 	}
+
+	s/ .*//;
 
 	if ($_ != 0) {
 		s/^0*//;
@@ -17,44 +23,52 @@ while (<>) {
 	}
 }
 
-for $group (keys(%val)) {
-	@val = sort { $a <=> $b } @{$val{$group}};
+my %groupmean = ();
 
-	$n = $#val + 1;
-	$sum = 0;
-	for ($i = 0; $i < $n; $i++) {
+for my $group (keys(%val)) {
+	my @val = sort { $a <=> $b } @{$val{$group}};
+
+	my $n = $#val + 1;
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
 		$sum += $val[$i];
 	}
-	$mean = $sum / $n;
+	my $mean = $sum / $n;
 
 	$groupmean{$group} = $mean;
+	print STDERR "group $group: $mean\n";
 }
 
-@groups = sort { $groupmean{$b} <=> $groupmean{$a} } keys(%groupmean);
+my @groups = sort { $groupmean{$b} <=> $groupmean{$a} } keys(%groupmean);
 
-for $group (@groups) {
-	@val = sort { $a <=> $b } @{$val{$group}};
+my $base = 20;
 
-	$n = $#val + 1;
-	$sum = 0;
-	for ($i = 0; $i < $n; $i++) {
+for my $group (@groups) {
+	my @val = sort { $a <=> $b } @{$val{$group}};
+
+	my $n = $#val + 1;
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
 		$sum += $val[$i];
 	}
-	$mean = $sum / $n;
+	my $mean = $sum / $n;
 
-	$diffsum = 0;
-	for ($i = 0; $i < $n; $i++) {
+	my $diffsum = 0;
+	for (my $i = 0; $i < $n; $i++) {
 		$diffsum += ($val[$i] - $mean) * ($val[$i] - $mean);
 	}
-	$variance = $diffsum / $n;
-	$stddev = sqrt($variance);
+	my $variance = $diffsum / $n;
+	my $stddev = sqrt($variance);
 
-	$increment = $stddev / 4;
-	$maxy = 0;
+	my $increment = $stddev / 4;
+	my $maxy = 0;
 
-	for ($i = $mean - 4 * $stddev; $i < $mean + 4 * $stddev; $i += $increment) {
-		$count = 0;
-		for ($j = 0; $j < $n; $j++) {
+	my @x = ();
+	my @y = ();
+
+	for (my $i = $mean - 4 * $stddev; $i < $mean + 4 * $stddev; $i += $increment) {
+		my $count = 0;
+		for (my $j = 0; $j < $n; $j++) {
 			if ($val[$j] >= $i && $val[$j] < $i + $increment) {
 				$count++;
 			}
@@ -68,27 +82,30 @@ for $group (@groups) {
 		}
 	}
 
-	push @x, $i;
+	push @x, $mean + 4 * $stddev;
 
-	for ($i = 0; $i < $#x; $i++) {
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 50 + 500 * $y[$i] / $maxy,
+	for (my $i = 0; $i < $#x; $i++) {
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 500 * $y[$i] / $maxy + $base,
 			$i == 0 ? "moveto" : "lineto");
-		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, 50 + 500 * $y[$i] / $maxy,
+		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, 500 * $y[$i] / $maxy + $base,
 			"lineto");
 	}
 
 	print "stroke\n";
 
-	for ($i = 0; $i <= $#x; $i++) {
-		$v = $x[$i];
+	for (my $i = 0; $i <= $#x; $i++) {
+		my $v = $x[$i];
+		my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($v - $mean) * ($v - $mean) / (2 * $stddev * $stddev));
 
-		$y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($v - $mean) * ($v - $mean) / (2 * $stddev * $stddev));
+		# print STDERR "$y\n";
 
-		print STDERR "$y\n";
-
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 50 + 500 * $y / $maxy,
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 500 * $y / $maxy + $base,
 			$i == 0 ? "moveto" : "lineto");
 	}
 
 	print "stroke\n";
+
+	$base += 500 * $maxy / $maxy + 20;
 }
+
+print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base\n";
