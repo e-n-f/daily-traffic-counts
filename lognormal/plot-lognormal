@@ -6,6 +6,8 @@ my $pi = 4 * atan2(1, 1);
 my $group = "";
 my %val = ();
 
+my $vertical = 2;
+
 while (<>) {
 	chomp;
 
@@ -85,9 +87,9 @@ for my $group (@groups) {
 	push @x, $mean + 4 * $stddev;
 
 	for (my $i = 0; $i < $#x; $i++) {
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 500 * $y[$i] / $maxy + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, $vertical * $y[$i] + $base,
 			$i == 0 ? "moveto" : "lineto");
-		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, 500 * $y[$i] / $maxy + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, $vertical * $y[$i] + $base,
 			"lineto");
 	}
 
@@ -99,13 +101,13 @@ for my $group (@groups) {
 
 		# print STDERR "$y\n";
 
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 500 * $y / $maxy + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, $vertical * $y + $base,
 			$i == 0 ? "moveto" : "lineto");
 	}
 
 	print "stroke\n";
 
-	$base += 500 * $maxy / $maxy + 20;
+	$base += $vertical * $maxy + 20;
 }
 
 print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base\n";
