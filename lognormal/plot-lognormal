@@ -11,6 +11,8 @@ my $vertical = 2;
 my $xmin = 10;
 my $xmax = 200000;
 
+print "/Helvetica findfont 20 scalefont setfont\n";
+
 while (<>) {
 	chomp;
 
@@ -65,6 +67,8 @@ for my $group (@groups) {
 	my $variance = $diffsum / $n;
 	my $stddev = sqrt($variance);
 
+	next if $stddev == 0;
+
 	my $increment = $stddev / 4;
 	my $maxy = 0;
 
@@ -109,6 +113,9 @@ for my $group (@groups) {
 	}
 
 	print "stroke\n";
+
+	printf("%.3f %.3f moveto ", 50 + 500 * ($x[$#x] - log($xmin)) / (log($xmax) - log($xmin)), $base);
+	print "($group) show stroke\n";
 
 	$base += $vertical * $maxy + 20;
 }
