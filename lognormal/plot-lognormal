@@ -102,13 +102,15 @@ for my $group (@groups) {
 
 	print "stroke\n";
 
-	for (my $i = 0; $i <= $#x; $i++) {
-		my $v = $x[$i];
+	for (my $i = 0; $i <= $#x; $i += .1) {
+		my $frac = $i - int($i);
+
+		my $v = $x[$i + 1] * $frac + $x[$i] * (1 - $frac);
 		my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($v - $mean) * ($v - $mean) / (2 * $stddev * $stddev));
 
 		# print STDERR "$y\n";
 
-		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y / $increment + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($v - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y / $increment + $base,
 			$i == 0 ? "moveto" : "lineto");
 	}
 
