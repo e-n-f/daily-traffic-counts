@@ -8,6 +8,9 @@ my %val = ();
 
 my $vertical = 2;
 
+my $xmin = 10;
+my $xmax = 200000;
+
 while (<>) {
 	chomp;
 
@@ -87,9 +90,9 @@ for my $group (@groups) {
 	push @x, $mean + 4 * $stddev;
 
 	for (my $i = 0; $i < $#x; $i++) {
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, $vertical * $y[$i] + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y[$i] + $base,
 			$i == 0 ? "moveto" : "lineto");
-		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, $vertical * $y[$i] + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i + 1] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y[$i] + $base,
 			"lineto");
 	}
 
@@ -101,7 +104,7 @@ for my $group (@groups) {
 
 		# print STDERR "$y\n";
 
-		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, $vertical * $y + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y + $base,
 			$i == 0 ? "moveto" : "lineto");
 	}
 
