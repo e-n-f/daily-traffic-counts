@@ -1,0 +1,94 @@
+#!/usr/bin/perl
+
+$pi = 4 * atan2(1, 1);
+
+while (<>) {
+	chomp;
+	s/ .*//;
+
+	if (/^group (.*)/) {
+		$group = 1;
+		next;
+	}
+
+	if ($_ != 0) {
+		s/^0*//;
+		push @{$val{$group}}, log($_);
+	}
+}
+
+for $group (keys(%val)) {
+	@val = sort { $a <=> $b } @{$val{$group}};
+
+	$n = $#val + 1;
+	$sum = 0;
+	for ($i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	$mean = $sum / $n;
+
+	$groupmean{$group} = $mean;
+}
+
+@groups = sort { $groupmean{$b} <=> $groupmean{$a} } keys(%groupmean);
+
+for $group (@groups) {
+	@val = sort { $a <=> $b } @{$val{$group}};
+
+	$n = $#val + 1;
+	$sum = 0;
+	for ($i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	$mean = $sum / $n;
+
+	$diffsum = 0;
+	for ($i = 0; $i < $n; $i++) {
+		$diffsum += ($val[$i] - $mean) * ($val[$i] - $mean);
+	}
+	$variance = $diffsum / $n;
+	$stddev = sqrt($variance);
+
+	$increment = $stddev / 4;
+	$maxy = 0;
+
+	for ($i = $mean - 4 * $stddev; $i < $mean + 4 * $stddev; $i += $increment) {
+		$count = 0;
+		for ($j = 0; $j < $n; $j++) {
+			if ($val[$j] >= $i && $val[$j] < $i + $increment) {
+				$count++;
+			}
+		}
+
+		push @x, $i;
+		push @y, $count;
+
+		if ($count > $maxy) {
+			$maxy = $count;
+		}
+	}
+
+	push @x, $i;
+
+	for ($i = 0; $i < $#x; $i++) {
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 50 + 500 * $y[$i] / $maxy,
+			$i == 0 ? "moveto" : "lineto");
+		printf("%.3f %.3f %s ", 50 + 500 * ($i + 1) / $#x, 50 + 500 * $y[$i] / $maxy,
+			"lineto");
+	}
+
+	print "stroke\n";
+
+	for ($i = 0; $i <= $#x; $i++) {
+		$v = $x[$i];
+
+		$y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($v - $mean) * ($v - $mean) / (2 * $stddev * $stddev));
+
+		print STDERR "$y\n";
+
+		printf("%.3f %.3f %s ", 50 + 500 * $i / $#x, 50 + 500 * $y / $maxy,
+			$i == 0 ? "moveto" : "lineto");
+	}
+
+	print "stroke\n";
+}
