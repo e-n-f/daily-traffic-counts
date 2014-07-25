@@ -4,41 +4,41 @@ out() {
 	cat $* | sort | ../../kc-traffic-counts/estimate-24-hour | ../../kc-traffic-counts/sum-walk | awk '($1 > 0)'
 }
 
-echo group arkansas.csv; out ../../*/counts-arkansas.csv
-echo group auburn.csv; out ../../*/counts-auburn.csv
-echo group bmts.csv; out ../../*/counts-bmts.csv
-echo group boston.csv; out ../../*/counts-boston.csv
-echo group bothell.csv; out ../../*/counts-bothell.csv
-echo group buffalo.csv; out ../../*/counts-buffalo.csv
-echo group cary.csv; out ../../*/counts-cary.csv
-echo group ccrpcvt.csv; out ../../*/counts-ccrpcvt.csv
-echo group corvallis.csv; out ../../*/counts-corvallis*.csv
-echo group dc.csv; out ../../*/counts-dc.csv
-echo group eugene.csv; out ../../*/counts-eugene.csv
-echo group hilliard.csv; out ../../*/counts-hilliard.csv
-echo group hp.csv; out ../../*/counts-hp.csv
-echo group kc.csv; out ../../*/counts-kc.csv
-echo group la.csv; out ../../*/counts-la-*.csv
-echo group mcallen.csv; out ../../*/counts-mcallen.csv
-echo group minneapolis.csv; out ../../*/counts-minneapolis.csv
-echo group misc.csv; out ../../*/counts-misc.csv
-echo group mndot.csv; out ../../*/counts-mndot.csv
-echo group montreal.csv; out ../../*/counts-montreal.csv
-echo group morpc.csv; out ../../*/counts-morpc.csv
-echo group ncdot.csv; out ../../*/counts-ncdot.csv
-echo group oakland.csv; out ../../*/counts-oakland.csv
-echo group perimetercid.csv; out ../../*/counts-perimetercid.csv
-echo group phoenix.csv; out ../../*/counts-phoenix.csv
-echo group portland.csv; out ../../*/counts-portland.csv
-echo group rcrpc.csv; out ../../*/counts-rcrpc.csv
-echo group redwood.csv; out ../../*/counts-redwood.csv
-echo group richmond.csv; out ../../*/counts-richmond.csv
-echo group rtc.csv; out ../../*/counts-rtc.csv
-echo group sanjose.csv; out ../../*/counts-sanjose.csv
-echo group sf.csv; out ../../*/counts-sf*.csv
-echo group syracuse.csv; out ../../*/counts-syracuse.csv
-echo group toronto.csv; out ../../*/counts-toronto*.csv
-echo group vancouver.csv; out ../../*/counts-vancouver.csv
-echo group virginia-beach.csv; out ../../*/counts-virginia-beach.csv
-echo group wenatchee.csv; out ../../*/counts-wenatchee.csv
+echo group Arkansas DOT; out ../../*/counts-arkansas.csv
+echo group Auburn, ME; out ../../*/counts-auburn.csv
+echo group Binghamton, NY; out ../../*/counts-bmts.csv
+echo group Boston, MA; out ../../*/counts-boston.csv
+echo group Botell, WA; out ../../*/counts-bothell.csv
+echo group Buffalo, NY; out ../../*/counts-buffalo.csv
+echo group Cary, NC; out ../../*/counts-cary.csv
+echo group Burlington, VT; out ../../*/counts-ccrpcvt.csv
+echo group Corvallis, OR; out ../../*/counts-corvallis*.csv
+echo group Washington, DC; out ../../*/counts-dc.csv
+echo group Eugene, OR; out ../../*/counts-eugene.csv
+echo group Hilliard, OH; out ../../*/counts-hilliard.csv
+echo group High Point, OH; out ../../*/counts-hp.csv
+echo group Kansas City, MO; out ../../*/counts-kc.csv
+echo group Los Angeles, CA; out ../../*/counts-la-*.csv
+echo group McAllen, TX; out ../../*/counts-mcallen.csv
+echo group Minneapolis, MN; out ../../*/counts-minneapolis.csv
+echo group Miscellaneous sources; out ../../*/counts-misc.csv
+echo group Minnesota DOT; out ../../*/counts-mndot.csv
+echo group Montreal, QC; out ../../*/counts-montreal.csv
+echo group Columbus, OH; out ../../*/counts-morpc.csv
+echo group North Carolina DOT; out ../../*/counts-ncdot.csv
+echo group Oakland, CA; out ../../*/counts-oakland.csv
+echo group Atlanta, GA; out ../../*/counts-perimetercid.csv
+echo group Phoenix, AZ; out ../../*/counts-phoenix.csv
+echo group Portland, OR; out ../../*/counts-portland.csv
+echo group Richland County, OH; out ../../*/counts-rcrpc.csv
+echo group Redwood City, CA; out ../../*/counts-redwood.csv
+echo group Richmond, VA; out ../../*/counts-richmond.csv
+echo group Vancouver, WA; out ../../*/counts-rtc.csv
+echo group San Jose, CA; out ../../*/counts-sanjose.csv
+echo group San Francisco, CA; out ../../*/counts-sf*.csv
+echo group Syracuse, NY; out ../../*/counts-syracuse.csv
+echo group Toronto, ON; out ../../*/counts-toronto*.csv
+echo group Vancouver, BC; out ../../*/counts-vancouver.csv
+echo group Virginia Beach, VA; out ../../*/counts-virginia-beach.csv
+echo group Wenatchee, WA; out ../../*/counts-wenatchee.csv
 
