@@ -42,3 +42,4 @@ echo group Vancouver, BC; out ../../*/counts-vancouver.csv
 echo group Virginia Beach, VA; out ../../*/counts-virginia-beach.csv
 echo group Wenatchee, WA; out ../../*/counts-wenatchee.csv
 
+echo group Everything; out ../../*/counts-*.csv
