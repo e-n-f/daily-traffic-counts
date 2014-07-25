@@ -8,8 +8,10 @@ my %val = ();
 
 my $vertical = 2;
 
-my $xmin = 10;
+my $xmin = 1;
 my $xmax = 200000;
+
+my $height = 50;
 
 print "/Helvetica findfont 20 scalefont setfont\n";
 
@@ -36,6 +38,8 @@ for my $group (keys(%val)) {
 	my @val = sort { $a <=> $b } @{$val{$group}};
 
 	my $n = $#val + 1;
+	next if $n < 75;
+
 	my $sum = 0;
 	for (my $i = 0; $i < $n; $i++) {
 		$sum += $val[$i];
@@ -94,9 +98,9 @@ for my $group (@groups) {
 	push @x, $mean + 4 * $stddev;
 
 	for (my $i = 0; $i < $#x; $i++) {
-		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y[$i] / $increment + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $height * $y[$i] / $maxy + $base,
 			$i == 0 ? "moveto" : "lineto");
-		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i + 1] - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y[$i] / $increment + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i + 1] - log($xmin)) / (log($xmax) - log($xmin)), $height * $y[$i] / $maxy + $base,
 			"lineto");
 	}
 
@@ -110,16 +114,16 @@ for my $group (@groups) {
 
 		# print STDERR "$y\n";
 
-		printf("%.3f %.3f %s ", 50 + 500 * ($v - log($xmin)) / (log($xmax) - log($xmin)), $vertical * $y / $increment + $base,
+		printf("%.3f %.3f %s ", 50 + 500 * ($v - log($xmin)) / (log($xmax) - log($xmin)), $height * $y / $maxy+ $base,
 			$i == 0 ? "moveto" : "lineto");
 	}
 
 	print "stroke\n";
 
 	printf("%.3f %.3f moveto ", 50 + 500 * ($x[$#x] - log($xmin)) / (log($xmax) - log($xmin)), $base);
-	print "($group) show stroke\n";
+	print "($n $group) show stroke\n";
 
-	$base += $vertical * $maxy / $increment + 20;
+	$base += $height * $maxy / $maxy + 20;
 }
 
 print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base\n";
