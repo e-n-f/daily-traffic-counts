@@ -54,6 +54,30 @@ my @groups = sort { $groupmean{$b} <=> $groupmean{$a} } keys(%groupmean);
 
 my $base = 20;
 
+my $gmean = 0;
+my $gstddev = 0;
+{
+	my @val = ();
+
+	for my $group (@groups) {
+		push @val, @{$val{$group}};
+	}
+
+	my $n = $#val + 1;
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	$gmean = $sum / $n;
+
+	my $diffsum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$diffsum += ($val[$i] - $gmean) * ($val[$i] - $gmean);
+	}
+	my $variance = $diffsum / $n;
+	$gstddev = sqrt($variance);
+}
+
 for my $group (@groups) {
 	my @val = sort { $a <=> $b } @{$val{$group}};
 
@@ -73,13 +97,13 @@ for my $group (@groups) {
 
 	next if $stddev == 0;
 
-	my $increment = $stddev / 4;
+	my $increment = $gstddev / 4;
 	my $maxy = 0;
 
 	my @x = ();
 	my @y = ();
 
-	for (my $i = $mean - 4 * $stddev; $i < $mean + 4 * $stddev; $i += $increment) {
+	for (my $i = $gmean - 4 * $gstddev; $i < $gmean + 4 * $gstddev; $i += $increment) {
 		my $count = 0;
 		for (my $j = 0; $j < $n; $j++) {
 			if ($val[$j] >= $i && $val[$j] < $i + $increment) {
@@ -95,7 +119,7 @@ for my $group (@groups) {
 		}
 	}
 
-	push @x, $mean + 4 * $stddev;
+	push @x, $gmean + 4 * $gstddev;
 
 	for (my $i = 0; $i < $#x; $i++) {
 		printf("%.3f %.3f %s ", 50 + 500 * ($x[$i] - log($xmin)) / (log($xmax) - log($xmin)), $height * $y[$i] / $maxy + $base,
@@ -121,7 +145,8 @@ for my $group (@groups) {
 	print "stroke\n";
 
 	printf("%.3f %.3f moveto ", 50 + 500 * ($x[$#x] - log($xmin)) / (log($xmax) - log($xmin)), $base);
-	print "($n $group) show stroke\n";
+	printf("(geom. mean = %d, geom. std. dev = %.3f: %s) show stroke\n",
+		exp($mean), exp($stddev), $group);
 
 	$base += $height * $maxy / $maxy + 20;
 }
