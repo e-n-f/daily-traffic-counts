@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+while (<>) {
+	chomp;
+	($a, $b) = split(/ /);
+
+	push @a, $a;
+	push @b, $b;
+
+	if ($#a > 500) {
+		@aa = sort { $a <=> $b } @a;
+		@bb = sort { $a <=> $b } @b;
+
+		print "$aa[$#aa / 2] $bb[$#bb / 2]\n";
+
+		shift @a;
+		shift @b;
+
+		# @a = ();
+		# @b = ();
+	}
+}
