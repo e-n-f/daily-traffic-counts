@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+while (<>) {
+	chomp;
+	@fields = split(/,/);
+
+	# print "$fields[4]\n";
+
+	#                17
+	#            5   6   7
+        #        16             8
+        #   20   15             9      18
+        #        14             10
+        #           13   12  11
+	#                19
+
+	if ($fields[9] + $fields[15] > $fields[6] + $fields[12]) {
+		$major = $fields[9] + $fields[15];
+		$minor = $fields[6] + $fields[12];
+	} else {
+		$major = $fields[6] + $fields[12];
+		$minor = $fields[9] + $fields[15];
+
+	}
+
+	$walk = $fields[17] + $fields[18] + $fields[19] + $fields[20];
+
+	if ($minor > 0 && $walk > 0) {
+		printf("%.6f %s %f %f %s\n", $major / $minor, $walk, $major, $minor, $_);
+	}
+}

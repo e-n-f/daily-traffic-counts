@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cat ../../*counts/counts*csv | grep -v extrap | sort | ../../kc-traffic-counts/estimate-24-hour | ./calc-major-split-walk | sort -n > major-split-walk
