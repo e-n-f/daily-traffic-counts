@@ -1,0 +1,9 @@
+f(x) = exp(m * x + b)
+b = log(500)
+m = -.001
+fit log(f(x)) "major-split-walk" using 0:(log($2)) via m, b
+
+print m, b
+print f(0)
+print f(19960)
+
