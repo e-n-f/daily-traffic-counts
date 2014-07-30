@@ -1,0 +1,7 @@
+#!/usr/bin/perl
+
+while (<>) {
+	($walkscore, $count) = split(/ /);
+
+	printf("%f %f\n", exp($walkscore * 0.059 + 2.56), $count);
+}

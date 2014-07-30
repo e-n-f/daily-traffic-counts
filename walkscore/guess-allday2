@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+use Math::Trig;
+
+while (<>) {
+	($walkscore, $count) = split(/ /);
+
+	printf("%f %f\n", exp(2.52 * asin(($walkscore - 47) / 53) + 5.42), $count);
+}
