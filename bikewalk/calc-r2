@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+use strict;
+
+my @x = ();
+my @y = ();
+my $xsum = 0;
+my $ysum = 0;
+my $n = 0;
+
+while (<>) {
+	chomp;
+	my ($x, $y) = split(/ /);
+
+	push @x, $x;
+	push @y, $y;
+	$n++;
+
+	$xsum += $x;
+	$ysum += $y;
+}
+
+my $xbar = $xsum / $n;
+my $ybar = $ysum / $n;
+
+my $sdx2 = 0;
+my $sdy2 = 0;
+for (my $i = 0; $i < $n; $i++) {
+	$sdx2 += ($x[$i] - $xbar) * ($x[$i] - $xbar);
+	$sdy2 += ($y[$i] - $ybar) * ($y[$i] - $ybar);
+}
+$sdx2 /= $n;
+$sdy2 /= $n;
+
+my $sdx = sqrt($sdx2);
+my $sdy = sqrt($sdy2);
+
+my @zx = ();
+my @zy = ();
+
+my $zxzysum = 0;
+
+for (my $i = 0; $i < $n; $i++) {
+	$zx[$i] = ($x[$i] - $xbar) / $sdx;
+	$zy[$i] = ($y[$i] - $ybar) / $sdy;
+
+	$zxzysum += $zx[$i] * $zy[$i];
+}
+
+my $r = $zxzysum / $n;
+
+printf("r = %f\n", $r);
+printf("r^2 = %f\n", $r * $r);

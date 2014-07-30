@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+while (<>) {
+	($drive, $walk, $bike) = split(/ /);
+
+	$guessbike = exp(log($walk) * 0.681);
+
+	print "$bike $guessbike\n";
+}
