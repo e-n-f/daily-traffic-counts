@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+
+while (<>) {
+	($speed, $count) = split(/ /);
+
+	printf("%f %f\n",
+		exp(-0.159755 * $speed + 8.73671),
+		#exp(($speed - 14.6026) / -.826387),
+		$count);
+
+}

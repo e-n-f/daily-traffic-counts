@@ -8,4 +8,5 @@ set ylabel "Daily pedestrian volume"
 #plot "not-toronto" using 1:2 title "", exp(8.73671 - 0.159755 * x)
 #plot "speed-to-count-multicity" using 1:2 title "", exp(8.39169 - 0.0791862 * x)
 #plot "toronto" using 1:2 title "Toronto", "not-toronto" using 1:2 title "US cities", exp(8.39169 - 0.0791862 * x)
-plot "toronto" using 1:2 title "Toronto" ps .5, exp(-0.162804 * x + 10.6217), "not-toronto" using 1:2 ps .3 title "US cities", exp((x - 14.6026) / -.826387)
+#plot "toronto" using 1:2 title "Toronto" ps .5, exp(-0.162804 * x + 10.6217), "not-toronto" using 1:2 ps .3 title "US cities", exp((x - 14.6026) / -.826387)
+plot "toronto" using 1:2 title "Toronto" ps .5, exp(-0.162804 * x + 10.6217), "not-toronto" using 1:2 ps .3 title "US cities", exp(-0.159755 * x + 8.73671)
