@@ -151,4 +151,24 @@ for my $group (@groups) {
 	$base += $height * $maxy / $maxy + 20;
 }
 
+printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+	50 + 500 * ($gmean - log($xmin)) / (log($xmax) - log($xmin)), 0,
+	50 + 500 * ($gmean - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
+printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+	50 + 500 * ($gmean + $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
+	50 + 500 * ($gmean + $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
+printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+	50 + 500 * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
+	50 + 500 * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
+printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+	50 + 500 * ($gmean - $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
+	50 + 500 * ($gmean - $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
+printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+	50 + 500 * ($gmean - 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
+	50 + 500 * ($gmean - 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
 print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base\n";
