@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+while (<>) {
+	@fields = split(/ /);
+
+	$reality = $fields[32];
+	$tweets = $fields[29];
+
+	if ($tweets == 0) {
+		printf("0 ");
+	} elsif ($tweets == 1) {
+		# exp(0.257572 * log(1) ** 1.57506 + 5.07796)
+		printf("160 ");
+	} else {
+		printf("%d ", exp(0.257572 * exp(log(log($tweets)) * 1.57506) + 5.07796));
+	}
+
+	print "$reality\n";
+}
