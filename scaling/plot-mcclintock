@@ -1,0 +1,8 @@
+set terminal postscript
+set xrange [0:24]
+set yrange [0:6]
+set xtics ("6:00" 0, "9:00" 3, "12:00" 6, "15:00" 9, "18:00" 12, "24:00" 15, "0:00" 18, "3:00" 21, "6:00" 24)
+set xlabel "Time of day"
+set ylabel "30 minute percentage of total"
+plot "distrib2" using ($1 - 6):($2 * 100 / 52.2034 * 2) lt 1 with steps title "", "distrib2" using ($1 + 24 - 6):($2 * 100 / 52.2034 * 2) lt 1 with steps title ""
+plot "distrib2" using ($1 - 6):($3 * 100 / 47.8191 * 2) lt 1 with steps title "", "distrib2" using ($1 + 24 - 6):($3 * 100 / 47.8191 * 2) lt 1 with steps title ""
