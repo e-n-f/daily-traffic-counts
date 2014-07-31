@@ -64,7 +64,7 @@ my $gstddev = 0;
 {
 	my @val = ();
 
-	for my $group (@groups) {
+	for my $group ("All data") {
 		push @val, @{$val{$group}};
 	}
 
@@ -153,31 +153,49 @@ for my $group (@groups) {
 		print "stroke\n";
 	}
 
-	print "/Helvetica findfont 20 scalefont setfont\n";
-	printf("%.3f %.3f moveto ", 50 + $wid * ($gmean + 3.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 5);
+	print "/Helvetica findfont 30 scalefont setfont\n";
+	printf("%.3f %.3f moveto ", 50 + $wid * ($gmean + 3.25 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%s) show stroke\n", $group);
 
-	print "/Helvetica findfont 15 scalefont setfont\n";
+	print "/Helvetica findfont 25 scalefont setfont\n";
 	printf("%.3f %.3f moveto ", 50 + $wid * ($mean - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%d) dup stringwidth pop 2 div neg 0 rmoveto show stroke\n", exp($mean));
 
-	print "/Helvetica findfont 12 scalefont setfont\n";
+	print "/Helvetica findfont 20 scalefont setfont\n";
 	printf("%.3f %.3f moveto ", 50 + $wid * ($mean + $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%d) dup stringwidth pop 2 div neg 0 rmoveto show stroke\n", exp($mean + $stddev));
 
 	printf("%.3f %.3f moveto ", 50 + $wid * ($mean - $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%d) dup stringwidth pop 2 div neg 0 rmoveto show stroke\n", exp($mean - $stddev));
 
+	my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($mean - $mean) * ($mean - $mean) / (2 * $stddev * $stddev));
+	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+		 50 + $wid * ($mean - log($xmin)) / (log($xmax) - log($xmin)), $base + 20,
+		 50 + $wid * ($mean - log($xmin)) / (log($xmax) - log($xmin)), $height * $y / $peak + $base);
+
+	my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($mean - $stddev - $mean) * ($mean - $stddev - $mean) / (2 * $stddev * $stddev));
+	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+		 50 + $wid * ($mean - $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base + 15,
+		 50 + $wid * ($mean - $stddev - log($xmin)) / (log($xmax) - log($xmin)), $height * $y / $peak + $base);
+
+	my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($mean + $stddev - $mean) * ($mean + $stddev - $mean) / (2 * $stddev * $stddev));
+	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+		 50 + $wid * ($mean + $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base + 15,
+		 50 + $wid * ($mean + $stddev - log($xmin)) / (log($xmax) - log($xmin)), $height * $y / $peak + $base);
+
+if (0) {
 	printf("%.3f %.3f moveto ", 50 + $wid * ($mean + 1.5 * $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%d) dup stringwidth pop 2 div neg 0 rmoveto show stroke\n", exp($mean + 1.5 * $stddev));
 
 	printf("%.3f %.3f moveto ", 50 + $wid * ($mean - 1.5 * $stddev - log($xmin)) / (log($xmax) - log($xmin)), $base - 10);
 	printf("(%d) dup stringwidth pop 2 div neg 0 rmoveto show stroke\n", exp($mean - 1.5 * $stddev));
+}
 
-	$base += $height * $maxy / $peak + 20;
+	$base += $height * $peak / $peak + 50;
 }
 
 if (0) {
+
 	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
 		50 + $wid * ($gmean - log($xmin)) / (log($xmax) - log($xmin)), 0,
 		50 + $wid * ($gmean - log($xmin)) / (log($xmax) - log($xmin)), $base);
@@ -187,16 +205,19 @@ if (0) {
 		50 + $wid * ($gmean + $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
 
 	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
-		50 + $wid * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
-		50 + $wid * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
-
-	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
 		50 + $wid * ($gmean - $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
 		50 + $wid * ($gmean - $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
+
+
+
+
+	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
+		50 + $wid * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
+		50 + $wid * ($gmean + 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
 
 	printf("%.3f %.3f moveto %.3f %.3f lineto stroke\n",
 		50 + $wid * ($gmean - 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), 0,
 		50 + $wid * ($gmean - 1.5 * $gstddev - log($xmin)) / (log($xmax) - log($xmin)), $base);
 }
 
-print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base\n";
+print STDERR "ps2pdf -dDEVICEHEIGHTPOINTS=$base -dDEVICEWIDTHPOINTS=900\n";
