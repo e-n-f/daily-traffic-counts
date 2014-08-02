@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $pi = 4 * atan2(1, 1);
+my $group = "";
+my %val = ();
+
+my $vertical = 2;
+
+my $xmin = 1;
+my $xmax = 200000;
+
+my $height = 50;
+
+while (<>) {
+	chomp;
+
+	if (/^group (.*)/) {
+		$group = $1;
+		# print STDERR "group $group\n";
+		next;
+	}
+
+	s/ .*//;
+
+	if ($_ != 0) {
+		s/^0*//;
+		push @{$val{$group}}, log($_);
+	}
+}
+
+my %groupmean = ();
+
+for my $group (keys(%val)) {
+	my @val = sort { $a <=> $b } @{$val{$group}};
+
+	my $n = $#val + 1;
+	# next if $n < 30;
+
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	my $mean = $sum / $n;
+
+	$groupmean{$group} = $mean;
+	print STDERR "group $group: $mean\n";
+}
+
+my @groups = sort { $groupmean{$a} <=> $groupmean{$b} } keys(%groupmean);
+
+my $base = 20;
+
+my $gmean = 0;
+my $gstddev = 0;
+{
+	my @val = ();
+
+	for my $group (@groups) {
+		push @val, @{$val{$group}};
+	}
+
+	my $n = $#val + 1;
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	$gmean = $sum / $n;
+
+	my $diffsum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$diffsum += ($val[$i] - $gmean) * ($val[$i] - $gmean);
+	}
+	my $variance = $diffsum / $n;
+	$gstddev = sqrt($variance);
+}
+
+for my $group (@groups) {
+	my @val = sort { $a <=> $b } @{$val{$group}};
+
+	my $n = $#val + 1;
+	my $sum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$sum += $val[$i];
+	}
+	my $mean = $sum / $n;
+
+	my $diffsum = 0;
+	for (my $i = 0; $i < $n; $i++) {
+		$diffsum += ($val[$i] - $mean) * ($val[$i] - $mean);
+	}
+	my $variance = $diffsum / $n;
+	my $stddev = sqrt($variance);
+
+	next if $stddev == 0;
+
+	my $increment = $gstddev / 4;
+	my $maxy = 0;
+
+	my @x = ();
+	my @y = ();
+
+	for (my $i = $gmean - 4 * $gstddev; $i < $gmean + 4 * $gstddev; $i += $increment) {
+		my $count = 0;
+		for (my $j = 0; $j < $n; $j++) {
+			if ($val[$j] >= $i && $val[$j] < $i + $increment) {
+				$count++;
+			}
+		}
+
+		push @x, $i;
+		push @y, $count;
+
+		if ($count > $maxy) {
+			$maxy = $count;
+		}
+	}
+
+	push @x, $gmean + 4 * $gstddev;
+
+	for (my $i = 0; $i < $#x; $i++) {
+	}
+
+	# print "stroke\n";
+
+	for (my $i = 0; $i <= $#x; $i += .1) {
+		my $frac = $i - int($i);
+
+		my $v = $x[$i + 1] * $frac + $x[$i] * (1 - $frac);
+		my $y = $n * $increment / ($stddev * sqrt(2 * $pi)) * exp(- ($v - $mean) * ($v - $mean) / (2 * $stddev * $stddev));
+
+		# print STDERR "$y\n";
+
+	}
+
+
+
+	printf("%s\t%d\t%.3f\t%d\n", $group, exp($mean), exp($stddev), $n);
+
+	$base += $height * $maxy / $maxy + 20;
+}
