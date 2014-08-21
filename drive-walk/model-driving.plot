@@ -1,19 +1,22 @@
 set terminal postscript
 
 
-a               = 21875.9
-u               = 10.1276
-o               = 0.673317
-a1              = 4426.42
-u1              = 8.70235
-o1              = 1.29859
+a               = 19486.7 
+u               = 10.1206 
+o               = 0.680603
+a1              = 11600.6 
+u1              = 10.5469 
+o1              = 2.06621 
+a2              = -2146.35
+u2              = 11.3069 
+o2              = 0.311625
 
-f(x) = a * (.5 + .5 * erf((log(x) - u) / (sqrt(2) * o))) + a1 * (.5 + .5 * erf((log(x) - u1) / (sqrt(2) * o1)))
+f(x) = a * (.5 + .5 * erf((log(x) - u) / (sqrt(2) * o))) + a1 * (.5 + .5 * erf((log(x) - u1) / (sqrt(2) * o1))) + a2 * (.5 + .5 * erf((log(x) - u2) / (sqrt(2) * o2)))
 
 fit f(x) "car-walk" using 1:0 via a, u, o, a1, u1, o1
 
 set logscale x
-plot "car-walk" using 1:0, f(x)
+plot "car-walk" using 1:0 with dots, f(x)
 unset logscale x
 
 print a, u, o, a1, u1, o1
@@ -37,5 +40,7 @@ print a3, u3, o3
 
 h(x) = a3 / (o3 * sqrt(2 * pi)) * exp(- (x - u3) ** 2 / (2 * o3 ** 2))
 
-set logscale y
+set logscale xy
+set xrange [1000:200000]
+set yrange [10:100000]
 plot "car-walk" using 1:4 with dots, h(f(x)) lt 3
