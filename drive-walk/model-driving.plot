@@ -12,6 +12,10 @@ f(x) = a * (.5 + .5 * erf((log(x) - u) / (sqrt(2) * o))) + a1 * (.5 + .5 * erf((
 
 fit f(x) "car-walk" using 1:0 via a, u, o, a1, u1, o1
 
+set logscale x
+plot "car-walk" using 1:0, f(x)
+unset logscale x
+
 print a, u, o, a1, u1, o1
 
 
@@ -25,6 +29,7 @@ o3               = 8294.44
 
 fit g(x) "car-walk-sum" using 0:4 via a3, u3, o3
 
+plot "car-walk-sum" using 0:4, g(x)
 
 print a3, u3, o3
 
