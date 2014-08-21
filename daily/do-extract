@@ -1,0 +1,15 @@
+#!/bin/sh
+
+cat ../../*/counts*csv | ./get-time-distrib2 | sed 's/ *$//' > time-distrib2
+
+(
+	echo "#!/usr/bin/perl"
+	echo ""
+	cat time-distrib2
+	echo ""
+	cat estimate-peak-hour.in
+) > estimate-peak-hour
+
+chmod +x estimate-peak-hour
+
+cat ../../*/counts*csv | sort | ./estimate-peak-hour -24 > daily.csv

@@ -1,0 +1,119 @@
+#!/usr/bin/perl
+
+$baseline = 16.75;  # 16:45-17:00
+$morning = 10.5;    # 10:30-10:45
+
+while (<>) {
+	($id, $name, $id2, $date, $time, @fields) = split(/,/);
+
+	$key = "$id,$name,$id2,$date";
+
+	if ($key ne $okey) {
+		if ($walk{$baseline} != 0 && $walk{$morning} != 0) {
+			$walkbasesum += $walk{$baseline};
+			$walkbasecount++;
+
+			for $n (sort { $a <=> $b } keys(%walk)) {
+				$walksum{$n} += $walk{$n};
+				$walkcount{$n} += $walk{$baseline};
+			}
+		}
+
+		if ($drive{$baseline} != 0 && $drive{$morning} != 0) {
+			$drivebasesum += $drive{$baseline};
+			$drivebasecount++;
+
+			for $n (sort { $a <=> $b } keys(%drive)) {
+				$drivesum{$n} += $drive{$n};
+				$drivecount{$n} += $drive{$baseline};
+			}
+		}
+
+		if ($bike{$baseline} != 0 && $bike{$morning} != 0) {
+			$bikebasesum += $bike{$baseline};
+			$bikebasecount++;
+
+			for $n (sort { $a <=> $b } keys(%bike)) {
+				$bikesum{$n} += $bike{$n};
+				$bikecount{$n} += $bike{$baseline};
+			}
+		}
+
+		%walk = ();
+		%drive = ();
+		%bike = ();
+		$okey = $key;
+	}
+
+	if ($time =~ /(..):(..) *- *(..):(..)/) {
+		$time = $1 + $2 / 60;
+		$time2 = $3 + $4 / 60;
+	}
+
+	if ($time2 == $time + .25) {
+		$walk = $fields[12] + $fields[13] + $fields[14] + $fields[15];
+		$walk{$time} = $walk;
+
+		$bike = $fields[16] + $fields[17] + $fields[18] + $fields[19];
+		$bike{$time} = $bike;
+
+		for ($i = 0; $i < 12; $i++) {
+			$drive{$time} += $fields[$i];
+		}
+	}
+}
+
+print "\@walk_scale = (\n";
+for ($i = 0; $i < 24; $i++) {
+	print "\t";
+	for ($j = $i; $j < $i + 1; $j += .25) {
+		$walk = $walksum{$j} / $walkcount{$j};
+		printf("%.6f, ", $walk);
+	}
+	print "\n";
+}
+print ");\n\n";
+
+print "\@drive_scale = (\n";
+for ($i = 0; $i < 24; $i++) {
+	print "\t";
+	for ($j = $i; $j < $i + 1; $j += .25) {
+		$drive = $drivesum{$j} / $drivecount{$j};
+		printf("%.6f, ", $drive);
+	}
+	print "\n";
+}
+print ");\n\n";
+
+print "\@bike_scale = (\n";
+for ($i = 0; $i < 24; $i++) {
+	print "\t";
+	for ($j = $i; $j < $i + 1; $j += .25) {
+		$walk = $walksum{$j} / $walkcount{$j};
+		$drive = $drivesum{$j} / $drivecount{$j};
+		$bike = $bikesum{$j} / $bikecount{$j};
+
+		if ($bikecount{$j} > 400) {
+			printf("%.6f, ", $bike);
+		} else {
+			printf("%.6f, ", ($walk + $drive) / 2);
+		}
+	}
+	print "\n";
+}
+print ");\n\n";
+
+exit(0);
+
+for $n (sort { $a <=> $b } keys(%walksum)) {
+	$walk = $walksum{$n} / $walkcount{$n};
+	$drive = $drivesum{$n} / $drivecount{$n};
+	$bike = $bikesum{$n} / $bikecount{$n};
+	$fakebike = ($walk + $drive) / 2;
+
+	if ($bikecount{$n} > 400) {
+		print "$n $walk $drive $bike\n";
+	} else {
+		print "$n $walk $drive $fakebike\n";
+	}
+}
