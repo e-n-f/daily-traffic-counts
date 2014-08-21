@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cat ../daily/daily.csv | grep -v extrap | ./sum-car-walk | sort -n > car-walk
+
+cat car-walk |
+awk '{
+	for (i = 1; i <= 4; i++) {
+		sum[i] += $i;
+		printf("%.2f ", sum[i]);
+	}
+
+	print $0;
+}' > car-walk-sum
+
+
+gnuplot model-driving.plot > foo.ps
