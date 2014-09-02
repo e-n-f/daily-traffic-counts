@@ -82,6 +82,8 @@
 );
 
 
+$skip = 0;
+
 for (my $i = 0; $i <= $#walk_scale; $i++) {
 	$walk_sum += $walk_scale[$i];
 }
@@ -136,7 +138,7 @@ if ($ARGV[0] eq "-24") {
 }
 
 sub out {
-	if ($count[0] != 0) {
+	if ($count[0] != 0 && !$skip) {
 		print "$okey,$time_peak,";
 
 		for ($i = 0; $i < 20; $i++) {
@@ -152,12 +154,21 @@ while (<>) {
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
 
 	$key = "$id,$name,$id2,$date";
+
 	if ($key ne $okey) {
 		out();
 
 		@sum = ();
 		@count = ();
+		$skip = 0;
 	}
+
+	if ($seen{"$key,$time"}) {
+		print STDERR "duplicate $key,$time\n";
+		$skip = 1;
+		next;
+	}
+	$seen{"$key,$time"} = 1;
 
 	if ($time =~ /(\d+):(\d\d) *- *(\d+):(\d\d)/) {
 		$start = $1 * 60 + $2;
