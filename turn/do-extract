@@ -1,4 +1,4 @@
-cat ../daily/daily.csv| ./calc-turns-vs-walk | awk '($1 > 0 && $2 > 0)' > turns-vs-walk-daily
+cat ../daily/daily.csv| grep -v extrap | ./calc-turns-vs-walk | awk '($1 > 0 && $2 > 0)' > turns-vs-walk-daily
 sort -n turns-vs-walk-daily | ./calc-medians > turns-vs-walk-daily-medians
 
 gnuplot plot > foo.ps
