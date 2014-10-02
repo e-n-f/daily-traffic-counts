@@ -21,6 +21,8 @@ unset logscale x
 
 print a, u, o, a1, u1, o1
 
+# f(x) is vehicle rank of intersection with vehicle volume x
+
 
 
 
@@ -36,6 +38,8 @@ plot "car-walk-sum" using 0:4, g(x)
 
 print a3, u3, o3
 
+# g(x) is accumulation of pedestrian volume at intersections with vehicle rank x and below
+
 
 
 h(x) = a3 / (o3 * sqrt(2 * pi)) * exp(- (x - u3) ** 2 / (2 * o3 ** 2))
@@ -44,3 +48,6 @@ set logscale xy
 set xrange [1000:200000]
 set yrange [10:100000]
 plot "car-walk" using 1:4 with dots, h(f(x)) lt 3
+
+
+# h(x) is pedestrian volume at intersections with vehicle volume x
