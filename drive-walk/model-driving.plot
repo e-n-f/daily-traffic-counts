@@ -13,13 +13,21 @@ o2              = 0.311625
 
 f(x) = a * (.5 + .5 * erf((log(x) - u) / (sqrt(2) * o))) + a1 * (.5 + .5 * erf((log(x) - u1) / (sqrt(2) * o1))) + a2 * (.5 + .5 * erf((log(x) - u2) / (sqrt(2) * o2)))
 
-fit f(x) "car-walk" using 1:0 via a, u, o, a1, u1, o1
+fit f(x) "car-walk" using 1:0 via a, u, o, a1, u1, o1, a2, u2, o2
 
 set logscale x
 plot "car-walk" using 1:0 with dots, f(x)
 unset logscale x
 
-print a, u, o, a1, u1, o1
+print "a = ", a
+print "u = ", u
+print "o = ", o
+print "a1 = ", a1
+print "u1 = ", u1
+print "o1 = ", o1
+print "a2 = ", a2
+print "u2 = ", u2
+print "o2 = ", o2
 
 # f(x) is vehicle rank of intersection with vehicle volume x
 
@@ -36,7 +44,9 @@ fit g(x) "car-walk-sum" using 0:4 via a3, u3, o3
 
 plot "car-walk-sum" using 0:4, g(x)
 
-print a3, u3, o3
+print "a3 = ", a3
+print "u3 = ", u3
+print "o3 = ", o3
 
 # g(x) is accumulation of pedestrian volume at intersections with vehicle rank x and below
 
