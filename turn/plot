@@ -1,0 +1,15 @@
+set terminal postscript
+
+a               = 6.75851
+b               = 8.5759 
+c               = 2.7749
+
+f(x) = exp(a * exp(-(log(x) - b) ** 2 / (2 * c ** 2)))
+
+fit f(x) "turns-vs-walk-daily-medians" using 1:2 via a, b, c
+
+print "peak ", exp(b)
+
+set logscale xy
+plot "turns-vs-walk-daily" using 1:2 with dots, "turns-vs-walk-daily-medians" using 1:2, f(x)
+
