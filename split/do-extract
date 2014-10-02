@@ -1,0 +1,3 @@
+cat ../daily/daily.csv | grep -v extrap | ./calc-major-split-walk | sort -n > major-split-walk
+
+gnuplot fit > foo.ps

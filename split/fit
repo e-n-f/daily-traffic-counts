@@ -1,3 +1,5 @@
+set terminal postscript
+
 f(x) = exp(m * x + b)
 b = log(500)
 m = -.001
@@ -7,3 +9,5 @@ print m, b
 print f(0)
 print f(19960)
 
+set logscale y
+plot "major-split-walk" using 0:2 with dots, f(x)
