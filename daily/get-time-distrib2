@@ -3,6 +3,8 @@
 $baseline = 16.75;  # 16:45-17:00
 $morning = 10.5;    # 10:30-10:45
 
+srand(0);
+
 while (<>) {
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
 
@@ -10,32 +12,20 @@ while (<>) {
 
 	if ($key ne $okey) {
 		if ($walk{$baseline} != 0 && $walk{$morning} != 0) {
-			$walkbasesum += $walk{$baseline};
-			$walkbasecount++;
-
 			for $n (sort { $a <=> $b } keys(%walk)) {
-				$walksum{$n} += $walk{$n};
-				$walkcount{$n} += $walk{$baseline};
+				push @{$walks{$n}}, ($walk{$n} - .5 + rand(1)) / $walk{$baseline};
 			}
 		}
 
 		if ($drive{$baseline} != 0 && $drive{$morning} != 0) {
-			$drivebasesum += $drive{$baseline};
-			$drivebasecount++;
-
 			for $n (sort { $a <=> $b } keys(%drive)) {
-				$drivesum{$n} += $drive{$n};
-				$drivecount{$n} += $drive{$baseline};
+				push @{$drives{$n}}, ($drive{$n} - .5 + rand(1)) / $drive{$baseline};
 			}
 		}
 
 		if ($bike{$baseline} != 0 && $bike{$morning} != 0) {
-			$bikebasesum += $bike{$baseline};
-			$bikebasecount++;
-
 			for $n (sort { $a <=> $b } keys(%bike)) {
-				$bikesum{$n} += $bike{$n};
-				$bikecount{$n} += $bike{$baseline};
+				push @{$bikes{$n}}, ($bike{$n} - .5 + rand(1)) / $bike{$baseline};
 			}
 		}
 
@@ -67,8 +57,9 @@ print "\@walk_scale = (\n";
 for ($i = 0; $i < 24; $i++) {
 	print "\t";
 	for ($j = $i; $j < $i + 1; $j += .25) {
-		$walk = $walksum{$j} / $walkcount{$j};
-		printf("%.6f, ", $walk);
+		@walks = sort { $a <=> $b } @{$walks{$j}};
+		printf("%.6f, ", $walks[$#walks / 2]);
+		push @outwalk, $walks[$#walks / 2];
 	}
 	print "\n";
 }
@@ -78,8 +69,9 @@ print "\@drive_scale = (\n";
 for ($i = 0; $i < 24; $i++) {
 	print "\t";
 	for ($j = $i; $j < $i + 1; $j += .25) {
-		$drive = $drivesum{$j} / $drivecount{$j};
-		printf("%.6f, ", $drive);
+		@drives = sort { $a <=> $b } @{$drives{$j}};
+		printf("%.6f, ", $drives[$#drives / 2]);
+		push @outdrive, $drives[$#drives / 2];
 	}
 	print "\n";
 }
@@ -89,15 +81,21 @@ print "\@bike_scale = (\n";
 for ($i = 0; $i < 24; $i++) {
 	print "\t";
 	for ($j = $i; $j < $i + 1; $j += .25) {
-		$walk = $walksum{$j} / $walkcount{$j};
-		$drive = $drivesum{$j} / $drivecount{$j};
-		$bike = $bikesum{$j} / $bikecount{$j};
+		@bikes = sort { $a <=> $b } @{$bikes{$j}};
 
-		if ($bikecount{$j} > 400) {
-			printf("%.6f, ", $bike);
+		if ($#bikes < 50) {
+			#push @bikes, @{$drives{$j}};
+			push @bikes, @{$walks{$j}};
+
+			@bikes = sort { $a <=> $b} @bikes;
+
+			push @guess, 1;
 		} else {
-			printf("%.6f, ", ($walk + $drive) / 2);
+			push @guess, 0;
 		}
+
+		printf("%.6f, ", $bikes[$#bikes / 2]);
+		push @outbike, $bikes[$#bikes / 2];
 	}
 	print "\n";
 }
@@ -105,15 +103,6 @@ print ");\n\n";
 
 exit(0);
 
-for $n (sort { $a <=> $b } keys(%walksum)) {
-	$walk = $walksum{$n} / $walkcount{$n};
-	$drive = $drivesum{$n} / $drivecount{$n};
-	$bike = $bikesum{$n} / $bikecount{$n};
-	$fakebike = ($walk + $drive) / 2;
-
-	if ($bikecount{$n} > 400) {
-		print "$n $walk $drive $bike\n";
-	} else {
-		print "$n $walk $drive $fakebike\n";
-	}
+for ($i = 0; $i <= $#outwalk; $i++) {
+	print "$outdrive[$i], $outwalk[$i], $outbike[$i] $guess[$i]\n";
 }
