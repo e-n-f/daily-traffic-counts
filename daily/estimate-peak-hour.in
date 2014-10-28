@@ -97,28 +97,35 @@ while (<>) {
 			next;
 		}
 
-		if ($start < 6 * 60) {
+		if ($start < 6 * 60 && $end != 24 * 60) {
 			print STDERR "Don't believe $key $time is really in the middle of the night\n";
 			next;
 		}
 
-		for ($t = $start; $t < $end; $t += 15) {
-			for ($i = 0; $i < 12; $i++) {
-				if ($dur == 0 || $drive_scale[$t / 15] == 0) {
-					print STDERR "$_\n";
-				}
-				$sum[$i] += $fields[$i] * 15 / $dur * $drive_sum / $drive_scale[$t / 15] * $drive_peak / $drive_sum;
-				$count[$i]++;
-			}
-			$n = 0;
-			for ($i = 12; $i < 16; $i++) {
-				$sum[$i] += $fields[$i] * 15 / $dur * $walk_sum / $walk_scale[$t / 15] * $walk_peak / $walk_sum;
-				$count[$i]++;
-			}
+		$ds = 0;
+		$ws = 0;
+		$bs = 0;
+		$n = 0;
 
+		for ($t = $start; $t < $end; $t += 15) {
+			$ds += $drive_scale[$t / 15];
+			$ws += $walk_scale[$t / 15];
+			$bs += $bike_scale[$t / 15];
+			$n += 15;
+		}
+
+		{
+			for ($i = 0; $i < 12; $i++) {
+				$sum[$i] += $dur * ($fields[$i] / $dur) / ($ds / $n) * $drive_peak;
+				$count[$i] += $dur;
+			}
+			for ($i = 12; $i < 16; $i++) {
+				$sum[$i] += $dur * ($fields[$i] / $dur) / ($ws / $n) * $walk_peak;
+				$count[$i] += $dur;
+			}
 			for ($i = 16; $i < 20; $i++) {
-				$sum[$i] += $fields[$i] * 15 / $dur * $bike_sum / $bike_scale[$t / 15] * $bike_peak / $bike_sum;
-				$count[$i]++;
+				$sum[$i] += $dur * ($fields[$i] / $dur) / ($bs / $n) * $bike_peak;
+				$count[$i] += $dur;
 			}
 		}
 	}
