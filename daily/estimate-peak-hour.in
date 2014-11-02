@@ -65,6 +65,7 @@ sub out {
 	}
 }
 
+line:
 while (<>) {
 	chomp;
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
@@ -88,30 +89,34 @@ while (<>) {
 	$seen{"$key1,$time"} = 1;
 
 	if ($time =~ /(\d+):(\d\d) *- *(\d+):(\d\d)/) {
-		$start = $1 * 60 + $2;
-		$end = $3 * 60 + $4;
-		$dur = $end - $start;
-
-		if ($start >= 24 * 60 || $end > 24 * 60 || $start < 0 || $dur == 0) {
-			print STDERR "Don't know what to do with time $time\n";
-			next;
-		}
-
-		if ($start < 6 * 60 && $end != 24 * 60) {
-			print STDERR "Don't believe $key $time is really in the middle of the night\n";
-			next;
-		}
-
+		$n = 0;
+		$dur = 0;
 		$ds = 0;
 		$ws = 0;
 		$bs = 0;
-		$n = 0;
 
-		for ($t = $start; $t < $end; $t += 15) {
-			$ds += $drive_scale[$t / 15];
-			$ws += $walk_scale[$t / 15];
-			$bs += $bike_scale[$t / 15];
-			$n += 15;
+		while ($time =~ s/(\d+):(\d\d) *- *(\d+):(\d\d)//) {
+			$start = $1 * 60 + $2;
+			$end = $3 * 60 + $4;
+
+			if ($start >= 24 * 60 || $end > 24 * 60 || $start < 0 || $end - $start == 0) {
+				print STDERR "Don't know what to do with time $time\n";
+				next line;
+			}
+
+			if ($start < 6 * 60 && $end != 24 * 60) {
+				print STDERR "Don't believe $key $time is really in the middle of the night\n";
+				next line;
+			}
+
+			$dur += $end - $start;
+
+			for ($t = $start; $t < $end; $t += 15) {
+				$ds += $drive_scale[$t / 15];
+				$ws += $walk_scale[$t / 15];
+				$bs += $bike_scale[$t / 15];
+				$n += 15;
+			}
 		}
 
 		{

@@ -6,6 +6,17 @@ $morning = 10.5;    # 10:30-10:45
 while (<>) {
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
 
+	if ($time =~ /^(..):(..) *- *(..):(..)$/) {
+		$time = $1 + $2 / 60;
+		$time2 = $3 + $4 / 60;
+	} else {
+		if (!$seen{$time}) {
+			print STDERR "don't know what to do with time $time\n";
+		}
+		$seen{$time} = 1;
+		next;
+	}
+
 	$key = "$id,$name,$id2,$date";
 
 	if ($key ne $okey) {
@@ -43,11 +54,6 @@ while (<>) {
 		%drive = ();
 		%bike = ();
 		$okey = $key;
-	}
-
-	if ($time =~ /(..):(..) *- *(..):(..)/) {
-		$time = $1 + $2 / 60;
-		$time2 = $3 + $4 / 60;
 	}
 
 	if ($time2 == $time + .25) {
