@@ -12,4 +12,9 @@ cat ../../*/counts*csv | ./get-time-distrib2 | sed 's/ *$//' > time-distrib2
 
 chmod +x estimate-peak-hour
 
-cat ../../*/counts*csv | sort | uniq | ./estimate-peak-hour -24 > daily.csv
+cat ../../*/counts*csv | 
+sed 's/^misc/zzzmisc/' |
+sort | uniq |
+./estimate-peak-hour -24 |
+sed 's/^zzzmisc/misc/' |
+sort > daily.csv
