@@ -12,9 +12,13 @@ cat ../../*/counts*csv | ./get-time-distrib2 | sed 's/ *$//' > time-distrib2
 
 chmod +x estimate-peak-hour
 
-cat ../../*/counts*csv | 
-sed 's/^misc/zzzmisc/' |
-sort | uniq |
-./estimate-peak-hour -24 |
-sed 's/^zzzmisc/misc/' |
-sort > daily.csv
+(
+	echo 'id,name,id,date,time,SB-Right,SB-Thru,SB-Left,WB-Right,WB-Thru,WB-Left,NB-Right,NB-Thru,NB-Left,EB-Right,EB-Thru,EB-Left,SB-Ped,WB-Ped,NB-Ped,EB-Ped,N-Bike,E-Bike,S-Bike,W-Bike,lat,lon'
+
+	cat ../../*/counts*csv | 
+	sed 's/^misc/zzzmisc/' |
+	sort | uniq |
+	./estimate-peak-hour -24 |
+	sed 's/^zzzmisc/misc/' |
+	sort 
+) > daily.csv
