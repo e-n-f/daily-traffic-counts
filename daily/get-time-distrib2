@@ -30,7 +30,7 @@ while (<>) {
 			$walkbasecount++;
 
 			for $n (sort { $a <=> $b } keys(%walk)) {
-				if ($walk{$n} != 0) {
+				if ($walk{$n} > 0) {
 					$walksum{$n} += log($walk{$n} / $walk{$baseline});
 					$walkcount{$n} += 1;
 				}
@@ -42,7 +42,7 @@ while (<>) {
 			$drivebasecount++;
 
 			for $n (sort { $a <=> $b } keys(%drive)) {
-				if ($drive{$n} != 0) {
+				if ($drive{$n} > 0) {
 					$drivesum{$n} += log($drive{$n} / $drive{$baseline});
 					$drivecount{$n} += 1;
 				}
@@ -54,7 +54,7 @@ while (<>) {
 			$bikebasecount++;
 
 			for $n (sort { $a <=> $b } keys(%bike)) {
-				if ($bike{$n} != 0) {
+				if ($bike{$n} > 0) {
 					$bikesum{$n} += log($bike{$n} / $bike{$baseline});
 					$bikecount{$n} += 1;
 				}
@@ -132,10 +132,15 @@ if (!$plot) {
 			$bike = ($walk + $drive) / 2;
 		}
 
+		$xn = $n;
+		if ($n < 4) {
+			$xn += 24;
+		}
+
 		if ($bikecount{$n} > 10) {
-			printf("%s %.6f %.6f %.6f\n", $n, exp($walk), exp($drive), exp($bike));
+			printf("%s %.6f %.6f %.6f %d %d %d\n", $xn, exp($walk), exp($drive), exp($bike), $walkcount{$n}, $drivecount{$n}, $bikecount{$n});
 		} else {
-			printf("%s %.6f %.6f %.6f guess\n", $n, exp($walk), exp($drive), exp($bike));
+			printf("%s %.6f %.6f %.6f %d %d %d guess\n", $xn, exp($walk), exp($drive), exp($bike), $walkcount{$n}, $drivecount{$n}, $bikecount{$n});
 		}
 	}
 }
