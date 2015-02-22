@@ -1,0 +1,13 @@
+# cat ../../*/counts*csv | ./get-time-distrib2 -p > distrib
+
+f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))
+a               = 1.08552
+u               = 15.1301
+o               = 4.46833
+a1              = -0.256307
+u1              = 14.3139
+o1              = 0.955323
+a2              = 0.410152
+u2              = 7.87569
+o2              = 1.1844
+fit f(x) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
