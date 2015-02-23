@@ -1,27 +1,19 @@
-# cat ../../*/counts*csv | ./get-time-distrib2 -p > distrib
+set terminal postscript
 
-f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))
-a               = 1.08552
+# cat ../../*/counts*csv | ./get-time-distrib2 -p | sort -n > distrib
+
+f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * sqrt(2 * pi)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * sqrt(2 * pi))
+
+a               = 0.953471
 u               = 15.1301
-o               = 4.46833
-a1              = -0.256307
+o               = 4.46831
+a1              = -0.0481375
 u1              = 14.3139
-o1              = 0.955323
-a2              = 0.410152
-u2              = 7.87569
-o2              = 1.1844
+o1              = 0.955437
+a2              = 0.0954886
+u2              = 7.87567
+o2              = 1.18437
+
 fit f(x) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
 
-
-
-f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * 2 * pi) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * 2 * pi) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * 2 * pi)
-a               = 30.4781
-u               = 15.1298
-o               = 4.46845
-a1              = -1.53916
-u1              = 14.3135
-o1              = 0.955725
-a2              = 3.0513
-u2              = 7.87561
-o2              = 1.18411
-fit f(x) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
+plot "distrib" using 1:2 with lines, f(x)
