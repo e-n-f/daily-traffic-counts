@@ -4,16 +4,16 @@ set terminal postscript
 
 f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * sqrt(2 * pi)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * sqrt(2 * pi))
 
-a               = 0.953471
-u               = 15.1301
-o               = 4.46831
-a1              = -0.0481375
-u1              = 14.3139
-o1              = 0.955437
-a2              = 0.0954886
-u2              = 7.87567
-o2              = 1.18437
+a               = 0.952224
+u               = 15.1217
+o               = 4.43057
+a1              = -0.0507823
+u1              = 14.3222
+o1              = 0.983205
+a2              = 0.0958018
+u2              = 7.88112
+o2              = 1.17762
 
-fit f(x) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
+fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
 
-plot "distrib" using 1:2 with lines, f(x)
+plot "distrib" using 1:2 with lines, f(x) + f(x + 24) + f(x - 24)
