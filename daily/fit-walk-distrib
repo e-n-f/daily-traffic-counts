@@ -1,78 +1,11 @@
 set terminal postscript
 set xrange [0:30]
-set yrange [0:]
+set yrange [0:0.1]
 
 # cat ../../*/counts*csv | ./get-time-distrib2 -p | sort -n > distrib
 
-f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * sqrt(2 * pi)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * sqrt(2 * pi))
-
-a               = 0.952224
-u               = 15.1217
-o               = 4.43057
-a1              = -0.0507823
-u1              = 14.3222
-o1              = 0.983205
-a2              = 0.0958018
-u2              = 7.88112
-o2              = 1.17762
-
-fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2
-
-plot "distrib" using 1:2 with lines, f(x) + f(x + 24) + f(x - 24)
-
 
 f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * sqrt(2 * pi)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * sqrt(2 * pi)) + a3 * exp(- (u3 - x) ** 2 / (2 * o3 ** 2))/(o3 * sqrt(2 * pi))
-
-
-a               = 0.887174
-u               = 15.0013
-o               = 4.31915
-a1              = -0.0542599
-u1              = 13.9453
-o1              = 1.18327
-a2              = 0.138572
-u2              = 7.72177
-o2              = 1.08942
-a3              = 0.0307648
-u3              = 17.3153
-o3              = 0.683688
-
-fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:3 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
-plot "distrib" using 1:3 with lines, f(x) + f(x + 24) + f(x - 24)
-
-
-
-
-
-a               = 0.760879
-u               = 15.634
-o               = 4.43682
-a1              = -0.00600425
-u1              = 14.325
-o1              = 0.236498
-a2              = 0.188523
-u2              = 8.31246
-o2              = 1.50015
-a3              = 0.0576061
-u3              = 17.528
-o3              = 0.854774
-
-fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
-plot "distrib" using 1:4 with lines, f(x) + f(x + 24) + f(x - 24)
-
-a               = 0.748694
-u               = 15.6102
-o               = 4.51868
-a2              = 0.187256
-u2              = 8.33123
-o2              = 1.50537
-a3              = 0.0661869
-u3              = 17.5118
-o3              = 0.922043
-a1 = 0
-
-fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a2, u2, o2, a3, u3, o3
-plot "distrib" using 1:4 with lines, f(x) + f(x + 24) + f(x - 24)
 
 
 # biking, making no assumption about late night
@@ -92,5 +25,41 @@ u3              = 17.3204
 o3              = 0.411049
 
 fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
+plot "distrib" using 1:4 with steps title "Bike", f(x) + f(x + 24) + f(x - 24) lt 6
 
-plot "distrib" using 1:4 with steps lt 3, f(x) + f(x + 24) + f(x - 24) lt 6
+
+a               = 0.585846
+u               = 16.2414
+o               = 4.89947
+a1              = 0.0912046
+u1              = 12.2003
+o1              = 1.21979
+a2              = 0.161598
+u2              = 8.29638
+o2              = 1.36408
+a3              = 0.162471
+u3              = 16.6348
+o3              = 1.99666
+
+
+
+fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
+plot "distrib" using 1:2 with steps title "Walk", f(x) + f(x + 24) + f(x - 24) lt 6
+
+
+a               = 0.719822
+u               = 15.7166
+o               = 4.31969
+a1              = 0.0528317
+u1              = 11.1177
+o1              = 1.31161
+a2              = 0.168743
+u2              = 7.75122
+o2              = 1.16722
+a3              = 0.062617
+u3              = 17.1517
+o3              = 0.975906
+
+fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:3 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
+plot "distrib" using 1:3 with steps title "Drive", f(x) + f(x + 24) + f(x - 24) lt 6
+
