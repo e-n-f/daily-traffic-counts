@@ -1,4 +1,6 @@
 set terminal postscript
+set xrange [0:30]
+set yrange [0:]
 
 # cat ../../*/counts*csv | ./get-time-distrib2 -p | sort -n > distrib
 
@@ -72,3 +74,23 @@ a1 = 0
 fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a2, u2, o2, a3, u3, o3
 plot "distrib" using 1:4 with lines, f(x) + f(x + 24) + f(x - 24)
 
+
+# biking, making no assumption about late night
+# but four peaks
+
+a               = 0.603252
+u               = 17.2
+o               = 3.07979
+a1              = 0.0765387
+u1              = 12.6958
+o1              = 1.21884
+a2              = 0.303162
+u2              = 8.63978
+o2              = 1.80507
+a3              = 0.0150229
+u3              = 17.3204
+o3              = 0.411049
+
+fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
+
+plot "distrib" using 1:4 with steps lt 3, f(x) + f(x + 24) + f(x - 24) lt 6
