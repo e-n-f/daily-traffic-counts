@@ -26,9 +26,6 @@ while (<>) {
 
 	if ($key ne $okey) {
 		if ($walk{$baseline} != 0) {
-			$walkbasesum += $walk{$baseline};
-			$walkbasecount++;
-
 			for $n (sort { $a <=> $b } keys(%walk)) {
 				if ($walk{$n} > 0) {
 					$walksum{$n} += log($walk{$n} / $walk{$baseline});
@@ -38,9 +35,6 @@ while (<>) {
 		}
 
 		if ($drive{$baseline} != 0) {
-			$drivebasesum += $drive{$baseline};
-			$drivebasecount++;
-
 			for $n (sort { $a <=> $b } keys(%drive)) {
 				if ($drive{$n} > 0) {
 					$drivesum{$n} += log($drive{$n} / $drive{$baseline});
@@ -50,9 +44,6 @@ while (<>) {
 		}
 
 		if ($bike{$baseline} != 0) {
-			$bikebasesum += $bike{$baseline};
-			$bikebasecount++;
-
 			for $n (sort { $a <=> $b } keys(%bike)) {
 				if ($bike{$n} > 0) {
 					$bikesum{$n} += log($bike{$n} / $bike{$baseline});
