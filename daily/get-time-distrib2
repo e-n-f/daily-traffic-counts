@@ -144,6 +144,7 @@ if (!$plot) {
 		if ($n < 4) {
 			$xn += 24;
 		}
+		$xn += 0.125; # 7.5 minute offset to center each count within its 15 minutes
 
 		if ($bikefake{$n}) {
 			printf("%s %.6f %.6f - %d %d %d\n", $xn, $walkscale{$n} / $walktotal * 4, $drivescale{$n} / $drivetotal * 4, $walkcount{$n} + $walkcount2{$n}, $drivecount{$n} + $drivecount2{$n}, $bikecount{$n} + $bikecount2{$n});
