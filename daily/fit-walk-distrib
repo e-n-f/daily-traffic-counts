@@ -4,8 +4,11 @@ set yrange [0:0.1]
 
 # cat ../../*/counts*csv | ./get-time-distrib2 -p | sort -n > distrib
 
+print "gaussian(x, u, o) = exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi))";
 
-f(x) = a * exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi)) + a1 * exp(- (u1 - x) ** 2 / (2 * o1 ** 2))/(o1 * sqrt(2 * pi)) + a2 * exp(- (u2 - x) ** 2 / (2 * o2 ** 2))/(o2 * sqrt(2 * pi)) + a3 * exp(- (u3 - x) ** 2 / (2 * o3 ** 2))/(o3 * sqrt(2 * pi))
+gaussian(x, u, o) = exp(- (x - u) ** 2 / (2 * o ** 2))/(o * sqrt(2 * pi))
+
+f(x) = a * gaussian(x, u, o) + a1 * gaussian(x, u1, o1) + a2 * gaussian(x, u2, o2) + a3 * gaussian(x, u3, o3)
 
 a               = 0.719822
 u               = 15.7166
