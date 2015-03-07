@@ -142,7 +142,7 @@ if (!$plot) {
 	for $n (sort { $a <=> $b } keys(%walkscale)) {
 		$xn = $n;
 		if ($n < 4) {
-			$xn += 24;
+			# $xn += 24;
 		}
 		$xn += 0.125; # 7.5 minute offset to center each count within its 15 minutes
 
