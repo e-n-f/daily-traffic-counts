@@ -79,7 +79,14 @@ print "             ", a3, " * gaussian_pdf(x, ", u3, ", ", o3, ");"
 # o3              = 0.411049
 
 fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:4 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
-plot "distrib" using ($1 - 0.125):4 with steps title "Bike", f(x) + f(x + 24) + f(x - 24) lt 6
+
+scale = 1 / (g(24) + g(24 + 24) + g(24 - 24) - (g(0) + g(24) + g(-24)))
+a = a * scale
+a1 = a1 * scale
+a2 = a2 * scale
+a3 = a3 * scale
+
+plot "distrib" using ($1 - 0.125):($4 * scale) with steps title "Bike", f(x) + f(x + 24) + f(x - 24) lt 6
 #plot g(x) + g(x + 24) + g(x - 24) - (g(0) + g(24) + g(-24))
 
 print "bike(x) =    ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
