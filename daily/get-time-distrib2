@@ -8,6 +8,10 @@ if ($ARGV[0] eq "-p") {
 $baseline = 16.75;  # 16:45-17:00
 $baseline2 = 7.75;  # 07:45-08:00
 
+sub sq {
+	return $_[0] * $_[0];
+}
+
 while (<>) {
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
 
@@ -29,9 +33,11 @@ while (<>) {
 			if ($walk{$n} > 0) {
 				if ($walk{$baseline} != 0) {
 					$walksum{$n} += log($walk{$n} / $walk{$baseline});
+					$walksq{$n} += sq(log($walk{$n} / $walk{$baseline}));
 					$walkcount{$n} += 1;
 				} elsif ($walk{$baseline2} != 0) {
 					$walksum2{$n} += log($walk{$n} / $walk{$baseline2});
+					$walksq2{$n} += sq(log($walk{$n} / $walk{$baseline2}));
 					$walkcount2{$n} += 1;
 				}
 			}
@@ -41,9 +47,11 @@ while (<>) {
 			if ($drive{$n} > 0) {
 				if ($drive{$baseline} != 0) {
 					$drivesum{$n} += log($drive{$n} / $drive{$baseline});
+					$drivesq{$n} += sq(log($drive{$n} / $drive{$baseline}));
 					$drivecount{$n} += 1;
 				} elsif ($drive{$baseline2} != 0) {
 					$drivesum2{$n} += log($drive{$n} / $drive{$baseline2});
+					$drivesq2{$n} += sq(log($drive{$n} / $drive{$baseline2}));
 					$drivecount2{$n} += 1;
 				}
 			}
@@ -53,9 +61,11 @@ while (<>) {
 			if ($bike{$n} > 0) {
 				if ($bike{$baseline} != 0) {
 					$bikesum{$n} += log($bike{$n} / $bike{$baseline});
+					$bikesq{$n} += sq(log($bike{$n} / $bike{$baseline}));
 					$bikecount{$n} += 1;
 				} elsif ($bike{$baseline2} != 0) {
 					$bikesum2{$n} += log($bike{$n} / $bike{$baseline2});
+					$bikesq2{$n} += sq(log($bike{$n} / $bike{$baseline2}));
 					$bikecount2{$n} += 1;
 				}
 			}
@@ -91,18 +101,18 @@ $bikescale2 = exp($bikesum{$baseline2} / $bikecount{$baseline2});
 
 for ($i = 0; $i < 24; $i++) {
 	for ($j = $i; $j < $i + 1; $j += .25) {
-		$walkscale{$j} = exp(($walksum{$j} + $walksum2{$j} * $walkscale2) / ($walkcount{$j} + $walkcount2{$j}));
-		$drivescale{$j} = exp(($drivesum{$j} + $drivesum2{$j} * $drivescale2) / ($drivecount{$j} + $drivecount2{$j}));
+		$walkscale{$j} = (($walksum{$j} + $walksum2{$j} * $walkscale2) / ($walkcount{$j} + $walkcount2{$j}));
+		$drivescale{$j} = (($drivesum{$j} + $drivesum2{$j} * $drivescale2) / ($drivecount{$j} + $drivecount2{$j}));
 		if ($bikecount{$j} + $bikecount2{$j} > 10) {
-			$bikescale{$j} = exp(($bikesum{$j} + $bikesum2{$j} * $bikescale2) / ($bikecount{$j} + $bikecount2{$j}));
+			$bikescale{$j} = (($bikesum{$j} + $bikesum2{$j} * $bikescale2) / ($bikecount{$j} + $bikecount2{$j}));
 		} else {
-			$bikescale{$j} = exp((log($walkscale{$j}) + log($drivescale{$j})) / 2);
+			$bikescale{$j} = ((($walkscale{$j}) + ($drivescale{$j})) / 2);
 			$bikefake{$j} = 1;
 		}
 
-		$walktotal += $walkscale{$j};
-		$drivetotal += $drivescale{$j};
-		$biketotal += $bikescale{$j};
+		$walktotal += exp($walkscale{$j});
+		$drivetotal += exp($drivescale{$j});
+		$biketotal += exp($bikescale{$j});
 	}
 }
 
@@ -111,7 +121,7 @@ if (!$plot) {
 	for ($i = 0; $i < 24; $i++) {
 		print "\t";
 		for ($j = $i; $j < $i + 1; $j += .25) {
-			printf("%.6f, ", $walkscale{$j});
+			printf("%.6f, ", exp($walkscale{$j}));
 		}
 		print "\n";
 	}
@@ -121,7 +131,7 @@ if (!$plot) {
 	for ($i = 0; $i < 24; $i++) {
 		print "\t";
 		for ($j = $i; $j < $i + 1; $j += .25) {
-			printf("%.6f, ", $drivescale{$j});
+			printf("%.6f, ", exp($drivescale{$j}));
 		}
 		print "\n";
 	}
@@ -131,7 +141,7 @@ if (!$plot) {
 	for ($i = 0; $i < 24; $i++) {
 		print "\t";
 		for ($j = $i; $j < $i + 1; $j += .25) {
-			printf("%.6f, ", $bikescale{$j});
+			printf("%.6f, ", exp($bikescale{$j}));
 		}
 		print "\n";
 	}
@@ -147,9 +157,33 @@ if (!$plot) {
 		$xn += 0.125; # 7.5 minute offset to center each count within its 15 minutes
 
 		if ($bikefake{$n}) {
-			printf("%s %.6f %.6f - %d %d %d\n", $xn, $walkscale{$n} / $walktotal * 4, $drivescale{$n} / $drivetotal * 4, $walkcount{$n} + $walkcount2{$n}, $drivecount{$n} + $drivecount2{$n}, $bikecount{$n} + $bikecount2{$n});
+			printf("%s %.6f %.6f ---- %d %d -- %.6f %.6f ---- %.6f %.6f ----\n",
+				$xn,
+				exp($walkscale{$n}) / $walktotal * 4,
+				exp($drivescale{$n}) / $drivetotal * 4,
+				$walkcount{$n} + $walkcount2{$n},
+				$drivecount{$n} + $drivecount2{$n},
+				$walkscale{$n},
+				$drivescale{$n},
+				sqrt((($walksq{$n} + $walksq2{$n}) - sq($walksum{$n} + $walksum2{$n}) / ($walkcount{$n} + $walkcount2{$n})) / ($walkcount{$n} + $walkcount2{$n})),
+				sqrt((($drivesq{$n} + $drivesq2{$n}) - sq($drivesum{$n} + $drivesum2{$n}) / ($drivecount{$n} + $drivecount2{$n})) / ($drivecount{$n} + $drivecount2{$n}))
+			);
 		} else {
-			printf("%s %.6f %.6f %.6f %d %d %d\n", $xn, $walkscale{$n} / $walktotal * 4, $drivescale{$n} / $drivetotal * 4, $bikescale{$n} / $biketotal * 4, $walkcount{$n} + $walkcount2{$n}, $drivecount{$n} + $drivecount2{$n}, $bikecount{$n} + $bikecount2{$n});
+			printf("%s %.6f %.6f %.6f %d %d %d %.6f %.6f %.6f %.6f %.6f %.6f\n",
+				$xn,
+				exp($walkscale{$n}) / $walktotal * 4,
+				exp($drivescale{$n}) / $drivetotal * 4,
+				exp($bikescale{$n}) / $biketotal * 4,
+				$walkcount{$n} + $walkcount2{$n},
+				$drivecount{$n} + $drivecount2{$n},
+				$bikecount{$n} + $bikecount2{$n},
+				$walkscale{$n},
+				$drivescale{$n},
+				$bikescale{$n},
+				sqrt((($walksq{$n} + $walksq2{$n}) - sq($walksum{$n} + $walksum2{$n}) / ($walkcount{$n} + $walkcount2{$n})) / ($walkcount{$n} + $walkcount2{$n})),
+				sqrt((($drivesq{$n} + $drivesq2{$n}) - sq($drivesum{$n} + $drivesum2{$n}) / ($drivecount{$n} + $drivecount2{$n})) / ($drivecount{$n} + $drivecount2{$n})),
+				sqrt((($bikesq{$n} + $bikesq2{$n}) - sq($bikesum{$n} + $bikesum2{$n}) / ($bikecount{$n} + $bikecount2{$n})) / ($bikecount{$n} + $bikecount2{$n}))
+			);
 		}
 	}
 }
