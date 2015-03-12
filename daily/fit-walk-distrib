@@ -30,6 +30,12 @@ fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:3 via a, u, o, a1, u1, o1, a2
 plot "distrib" using ($1 - 0.125):3 with steps title "Drive", f(x) + f(x + 24) + f(x - 24) lt 6
 #plot g(x) + g(x + 24) + g(x - 24) - (g(0) + g(24) + g(-24))
 
+scale = 1 / (g(24) + g(24 + 24) + g(24 - 24) - (g(0) + g(24) + g(-24)))
+a = a * scale
+a1 = a1 * scale
+a2 = a2 * scale
+a3 = a3 * scale
+
 print "drive(x) =   ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
 print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
 print "             ", a2, " * gaussian_pdf(x, ", u2, ", ", o2, ") +"
@@ -56,6 +62,12 @@ o3              = 1.99666
 fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:2 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3
 plot "distrib" using ($1 - 0.125):2 with steps title "Walk", f(x) + f(x + 24) + f(x - 24) lt 6
 #plot g(x) + g(x + 24) + g(x - 24) - (g(0) + g(24) + g(-24))
+
+scale = 1 / (g(24) + g(24 + 24) + g(24 - 24) - (g(0) + g(24) + g(-24)))
+a = a * scale
+a1 = a1 * scale
+a2 = a2 * scale
+a3 = a3 * scale
 
 print "walk(x) =    ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
 print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
