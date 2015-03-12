@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cat ../../*/counts*csv | ./get-time-distrib2 | sed 's/ *$//' > time-distrib2
+# cat ../../*/counts*csv | ./get-time-distrib2 | sed 's/ *$//' > time-distrib2
 
 (
 	echo "#!/usr/bin/perl"

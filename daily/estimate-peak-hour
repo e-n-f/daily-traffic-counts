@@ -82,6 +82,66 @@
 );
 
 
+#!/usr/bin/perl
+
+use POSIX;
+
+sub erf {
+	my $x = $_[0];
+
+	my $t = 1 / (1 + 0.5 * abs($x));
+	my $tau = $t * exp(-POSIX::pow($x, 2) -
+		1.26551223 +
+		1.00002368 * $t +
+		0.37409196 * POSIX::pow($t, 2) +
+		0.09678418 * POSIX::pow($t, 3) -
+		0.18628806 * POSIX::pow($t, 4) +
+		0.27886807 * POSIX::pow($t, 5) -
+		1.13520398 * POSIX::pow($t, 6) +
+		1.48851587 * POSIX::pow($t, 7) -
+		0.82215223 * POSIX::pow($t, 8) +
+		0.17087277 * POSIX::pow($t, 9));
+	if ($x >= 0) {
+		return 1 - $tau;
+	} else {
+		return $tau - 1;
+	}
+}
+
+sub gaussian_cdf {
+	my ($x, $u, $o) = @_;
+	return .5 * (.5 + erf(($x - $u) / ($o * sqrt(2))));
+}
+
+sub drive { return
+             0.702862036738917 * gaussian_cdf($_[0], 15.9297900074372, 4.18930162517776) +
+             0.182966045800718 * gaussian_cdf($_[0], 7.90984034338895, 1.19773575210496) +
+             0.0572745443397448 * gaussian_cdf($_[0], 11.302377250832, 1.29227842534305) +
+             0.0568973731206275 * gaussian_cdf($_[0], 17.2900891364536, 0.941603076119222);
+}
+
+sub walk { return
+             0.607594243462025 * gaussian_cdf($_[0], 16.1793882392213, 4.88055064811325) +
+             0.162751658533735 * gaussian_cdf($_[0], 8.34675513155887, 1.30243647688119) +
+             0.0896832473037161 * gaussian_cdf($_[0], 12.2894632237202, 1.31262131757656) +
+             0.1399708507219 * gaussian_cdf($_[0], 16.861759160285, 1.9671791363091);
+}
+
+sub bike { return
+             0.0793791021429211 * gaussian_cdf($_[0], 22.0505104521932, 1.81613048490325) +
+             0.294097569731473 * gaussian_cdf($_[0], 8.60637780138981, 1.62276042113877) +
+             0.291321710097042 * gaussian_cdf($_[0], 13.4834420762478, 2.00256720065779) +
+             0.335201618028565 * gaussian_cdf($_[0], 17.7702191345837, 1.6834315666608);
+}
+
+sub walk2 { return walk($_[0] - 24) + walk($_[0]) + walk($_[0] + 24) };
+sub drive2 { return drive($_[0] - 24) + drive($_[0]) + drive($_[0] + 24) };
+sub bike2 { return bike($_[0] - 24) + bike($_[0]) + bike($_[0] + 24) };
+
+sub walk3 { return $walk_cache{$_[0]} if $walk_cache{$_[0]} ne ""; return $walk_cache{$_[0]} = walk2($_[0]); }
+sub drive3 { return $drive_cache{$_[0]} if $drive_cache{$_[0]} ne ""; return $drive_cache{$_[0]} = drive2($_[0]); }
+sub bike3 { return $bike_cache{$_[0]} if $bike_cache{$_[0]} ne ""; return $bike_cache{$_[0]} = bike2($_[0]); }
+
 $skip = 0;
 
 for (my $i = 0; $i <= $#walk_scale; $i++) {
@@ -128,17 +188,24 @@ $time_peak = sprintf("%02d:%02d-%02d:%02d",
 	int($drive_peak_when / 4), ($drive_peak_when % 4) * 15,
 	int($drive_peak_when / 4 + 1), ($drive_peak_when % 4) * 15);
 
+$out_start = $drive_peak_when / 4;
+$out_end = $drive_peak_when / 4 + 1;
+
 if ($ARGV[0] eq "-24") {
 	$walk_peak = $walk_sum;
 	$bike_peak = $bike_sum;
 	$drive_peak = $drive_sum;
 	$time_peak = "00:00-24:00";
 
+	$out_start = 0;
+	$out_end = 24;
+
 	shift @ARGV;
 }
 
 sub out {
 	if ($count[0] != 0 && !$skip) {
+		# printf("known %f 1/%f\n", $count[12], 1/$count[12]);
 		print "$okey,$time_peak,";
 
 		for ($i = 0; $i < 20; $i++) {
@@ -179,6 +246,10 @@ while (<>) {
 		$ws = 0;
 		$bs = 0;
 
+		$drive_known = 0;
+		$walk_known = 0;
+		$bike_known = 0;
+
 		while ($time =~ s/(\d+):(\d\d) *- *(\d+):(\d\d)//) {
 			$start = $1 * 60 + $2;
 			$end = $3 * 60 + $4;
@@ -201,9 +272,15 @@ while (<>) {
 				$bs += $bike_scale[$t / 15];
 				$n += 15;
 			}
+
+			$drive_known += drive3($end / 60) - drive3($start / 60);
+			$walk_known += walk3($end / 60) - walk3($start / 60);
+			$bike_known += bike3($end / 60) - bike3($start / 60);
+
+			# printf("for %f hours, %f to %f is 1/%f of the day\n", ($end - $start) / 60, $start / 60, $end / 60, 1 / (walk3($end / 60) - walk3($start / 60)));
 		}
 
-		{
+		if (0) {
 			for ($i = 0; $i < 12; $i++) {
 				$sum[$i] += $dur * ($fields[$i] / $dur) / ($ds / $n) * $drive_peak;
 				$count[$i] += $dur;
@@ -215,6 +292,19 @@ while (<>) {
 			for ($i = 16; $i < 20; $i++) {
 				$sum[$i] += $dur * ($fields[$i] / $dur) / ($bs / $n) * $bike_peak;
 				$count[$i] += $dur;
+			}
+		} else {
+			for ($i = 0; $i < 12; $i++) {
+				$sum[$i] += $fields[$i] * (drive3($out_end) - drive3($out_start));
+				$count[$i] += $drive_known;
+			}
+			for ($i = 12; $i < 16; $i++) {
+				$sum[$i] += $fields[$i] * (walk3($out_end) - walk3($out_start));
+				$count[$i] += $walk_known;
+			}
+			for ($i = 16; $i < 20; $i++) {
+				$sum[$i] += $fields[$i] * (bike3($out_end) - bike3($out_start));
+				$count[$i] += $bike_known;
 			}
 		}
 	}

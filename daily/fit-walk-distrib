@@ -36,13 +36,11 @@ a1 = a1 * scale
 a2 = a2 * scale
 a3 = a3 * scale
 
-print "drive(x) =   ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
+print "drive(x) =   ";
+print "             ", a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
 print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
 print "             ", a2, " * gaussian_pdf(x, ", u2, ", ", o2, ") +"
 print "             ", a3, " * gaussian_pdf(x, ", u3, ", ", o3, ");"
-
-
-
 
 a               = 0.585846
 u               = 16.2414
@@ -69,7 +67,8 @@ a1 = a1 * scale
 a2 = a2 * scale
 a3 = a3 * scale
 
-print "walk(x) =    ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
+print "walk(x) =    ";
+print "             ", a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
 print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
 print "             ", a2, " * gaussian_pdf(x, ", u2, ", ", o2, ") +"
 print "             ", a3, " * gaussian_pdf(x, ", u3, ", ", o3, ");"
@@ -101,7 +100,8 @@ a3 = a3 * scale
 plot "distrib" using ($1 - 0.125):($4 * scale) with steps title "Bike", f(x) + f(x + 24) + f(x - 24) lt 6
 #plot g(x) + g(x + 24) + g(x - 24) - (g(0) + g(24) + g(-24))
 
-print "bike(x) =    ",  a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
+print "bike(x) =    ";
+print "             ", a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
 print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
 print "             ", a2, " * gaussian_pdf(x, ", u2, ", ", o2, ") +"
 print "             ", a3, " * gaussian_pdf(x, ", u3, ", ", o3, ");"
