@@ -16,7 +16,7 @@ where the important part is the time, which needs to be in a format like
 to specify, in 24-hour time, what portion of the day was counted.
 
 So if you have a file <code>oakland.csv</code> like this,
-that counts two intersections for an hour each, but different hours:
+that counts two intersections for two hours each, but different hours:
 
     oakland/oak031661.txt,Lowell St -- Stanford Ave / Oakland  CA,x,4/14/2011,07:55-08:55,69,0,1,11,402,0,33,0,0,16,268,0,5,0,5,5,1,1,5,3,,
     oakland/oak031661.txt,Lowell St -- Stanford Ave / Oakland  CA,x,4/14/2011,16:55-17:55,63,0,1,23,407,0,56,0,0,11,716,0,14,0,1,6,3,0,8,6,,
