@@ -212,7 +212,11 @@ sub out {
 			printf("%.1f,", $sum[$i] / $count[$i]);
 		}
 
-		print "$where\n";
+		print "$where";
+
+		@od = keys(%outdur);
+		printf(",daily-accuracy:%.3f,minutes:%d", 3 * exp(log($#od + 1) / -7), $#od + 1);
+		print "\n";
 	}
 }
 
@@ -230,6 +234,7 @@ while (<>) {
 		@sum = ();
 		@count = ();
 		$skip = 0;
+		%outdur = ();
 	}
 
 	if ($seen{"$key1,$time"}) {
@@ -271,6 +276,12 @@ while (<>) {
 				$ws += $walk_scale[$t / 15];
 				$bs += $bike_scale[$t / 15];
 				$n += 15;
+			}
+
+			if ($dur <= 60 * 24) {
+				for ($t = $start; $t < $end; $t++) {
+					$outdur{$t} = 1;
+				}
 			}
 
 			$drive_known += drive3($end / 60) - drive3($start / 60);
