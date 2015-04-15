@@ -1,15 +1,42 @@
 #!/usr/bin/perl
 
+$foot = .00000274;
+$pi = 4 * atan2(1,1);
+
+$bucket = 2000 * $foot;
+
 while (<>) {
 	($id, $name, $id2, $date, $time, @fields) = split(/,/);
 
 	$walk = $fields[12] + $fields[13] + $fields[14] + $fields[15];
 	next if $walk == 0;
 
+	$lat = $fields[20];
+	$lon = $fields[21];
+	$rat = cos($lat * $pi / 180);
+
 	$where = "$fields[21],$fields[20]";
 	next if $fields[21] == 0;
 
+	$latb = int($lat / $bucket);
+	$lonb = int($lon / $bucket);
+
+	for $where2 (@{$maybe{$latb}{$lonb}}) {
+		($lon2, $lat2) = split(/,/, $where2);
+		$latd = $lat2 - $lat;
+		$lond = ($lon2 - $lon) * $rat;
+		$d = sqrt($latd * $latd + $lond * $lond);
+		if ($d < 100 * $foot) {
+			#print STDERR "found $where2 for $where\n";
+			$where = $where2;
+		}
+	}
+
+	print STDERR "$seq\r";
+	$seq++;
+
 	push @{$counts{$where}}, $walk;
+	push @{$maybe{$latb}{$lonb}}, $where;
 }
 
 @keys = keys(%counts);
