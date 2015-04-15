@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+while (<>) {
+	($id, $name, $id2, $date, $time, @fields) = split(/,/);
+
+	$walk = $fields[12] + $fields[13] + $fields[14] + $fields[15];
+	next if $walk == 0;
+
+	$where = "$fields[21],$fields[20]";
+	next if $fields[21] == 0;
+
+	push @{$counts{$where}}, $walk;
+}
+
+@keys = keys(%counts);
+
+for $where (keys(%counts)) {
+	@c = @{$counts{$where}};
+
+	$sum = 0;
+	$n = 0;
+
+	for $val (@c) {
+		if ($val != 0) {
+			$sum += log($val);
+			$n++;
+		}
+	}
+
+	$geom_mean = int(exp($sum / $n));
+	$sqrt = sqrt($geom_mean);
+
+	print "{ \"type\": \"Feature\", \"properties\": { \"count\": $geom_mean, \"sqrt\": $sqrt}, \"geometry\": { \"type\": \"Point\", \"coordinates\": [ $where ]} }\n";
+}
