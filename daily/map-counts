@@ -18,6 +18,8 @@ while (<>) {
 	$where = "$fields[21],$fields[20]";
 	next if $fields[21] == 0;
 
+	$name{$where} = $name;
+
 	$latb = int($lat / $bucket);
 	$lonb = int($lon / $bucket);
 
@@ -56,6 +58,15 @@ for $where (keys(%counts)) {
 
 	$geom_mean = int(exp($sum / $n));
 	$sqrt = sqrt($geom_mean);
+
+	for $val (@c) {
+		# 3 standard deviations from 1.4x normal variation between days
+		if ($val > $geom_mean * 1.4 * 3 ||
+		    $val < $geom_mean / 1.4 / 3) {
+			print STDERR "Big discrepancy $val vs $geom_mean for $where $name{$where}\n";
+			last;
+		}
+	}
 
 	print "{ \"type\": \"Feature\", \"properties\": { \"count\": $geom_mean, \"sqrt\": $sqrt}, \"geometry\": { \"type\": \"Point\", \"coordinates\": [ $where ]} }\n";
 }
