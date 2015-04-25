@@ -18,8 +18,6 @@ while (<>) {
 	$where = "$fields[21],$fields[20]";
 	next if $fields[21] == 0;
 
-	$name{$where} = $name;
-
 	$latb = int($lat / $bucket);
 	$lonb = int($lon / $bucket);
 
@@ -34,6 +32,8 @@ while (<>) {
 		}
 	}
 
+	$name{$where} = $name;
+
 	print STDERR "$seq\r";
 	$seq++;
 
@@ -44,7 +44,7 @@ while (<>) {
 @keys = keys(%counts);
 
 for $where (keys(%counts)) {
-	@c = @{$counts{$where}};
+	@c = sort { $a <=> $b } @{$counts{$where}};
 
 	$sum = 0;
 	$n = 0;
@@ -63,7 +63,7 @@ for $where (keys(%counts)) {
 		# 3 standard deviations from 1.4x normal variation between days
 		if ($val > $geom_mean * 1.4 * 3 ||
 		    $val < $geom_mean / 1.4 / 3) {
-			print STDERR "Big discrepancy $val vs $geom_mean for $where $name{$where}\n";
+			print STDERR "Big discrepancy @c vs $geom_mean for $where $name{$where}\n";
 			last;
 		}
 	}
