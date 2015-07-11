@@ -1,0 +1,54 @@
+set terminal postscript
+set xrange [0:24]
+set yrange [0:0.1]
+
+# cat ../../la-traffic-counts/tube.csv | sed 's/$/,1,1,1,1,1,1,1,1/' | ./get-time-distrib2 -p | sort -n > distrib
+
+print "gaussian_pdf(x, u, o) = exp(- (x - u) * (x - u) / (2 * o * o))/(o * sqrt(2 * pi))";
+print "gaussian_cdf(x, u, o) = .5 * (.5 + erf((x - u) / (o * sqrt(2))))";
+
+gaussian_pdf(x, u, o) = exp(- (x - u) * (x - u) / (2 * o * o))/(o * sqrt(2 * pi))
+gaussian_cdf(x, u, o) = .5 * (.5 + erf((x - u) / (o * sqrt(2))))
+
+f(x) = a * gaussian_pdf(x, u, o) + a1 * gaussian_pdf(x, u1, o1) + a2 * gaussian_pdf(x, u2, o2) + a3 * gaussian_pdf(x, u3, o3) + a4 * gaussian_pdf(x, u4, o4) + a5 * gaussian_pdf(x, u5, o5) + a6 * gaussian_pdf(x, u6, o6)
+g(x) = a * gaussian_cdf(x, u, o) + a1 * gaussian_cdf(x, u1, o1) + a2 * gaussian_cdf(x, u2, o2) + a3 * gaussian_cdf(x, u3, o3) + a4 * gaussian_cdf(x, u4, o4) + a5 * gaussian_cdf(x, u5, o5) + a6 * gaussian_cdf(x, u6, o6)
+
+a               = 0.596285  
+u               = 15.5559   
+o               = 4.50748   
+a1              = 0.0102985 
+u1              = 7.78736   
+o1              = 0.292362  
+a2              = 0.12423   
+u2              = 8.00599   
+o2              = 1.15247   
+a3              = 0.113548  
+u3              = 17.8271   
+o3              = 1.33123   
+a4              = 0.0134166 
+u4              = 15.2956   
+o4              = 0.621532  
+a5              = 0.118284  
+u5              = 11.0344   
+o5              = 2.47485   
+a6              = 0.0239162 
+u6              = 21.7399   
+o6              = 1.2066    
+
+fit f(x) + f(x + 24) + f(x - 24) "distrib" using 1:3 via a, u, o, a1, u1, o1, a2, u2, o2, a3, u3, o3, a4, u4, o4, a5, u5, o5, a6, u6, o6
+plot "distrib" using ($1 - 0.125):3 with steps title "Drive", f(x) + f(x + 24) + f(x - 24) lt 6
+#plot g(x) + g(x + 24) + g(x - 24) - (g(0) + g(24) + g(-24))
+
+scale = 1 / (g(24) + g(24 + 24) + g(24 - 24) - (g(0) + g(24) + g(-24)))
+a = a * scale
+a1 = a1 * scale
+a2 = a2 * scale
+a3 = a3 * scale
+a3 = a4 * scale
+
+print "drive(x) =   ";
+print "             ", a, " * gaussian_pdf(x, ",  u, ", ",  o, ") +"
+print "             ", a1, " * gaussian_pdf(x, ", u1, ", ", o1, ") +"
+print "             ", a2, " * gaussian_pdf(x, ", u2, ", ", o2, ") +"
+print "             ", a3, " * gaussian_pdf(x, ", u3, ", ", o3, ");"
+print "             ", a4, " * gaussian_pdf(x, ", u4, ", ", o4, ");"
