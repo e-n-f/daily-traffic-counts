@@ -22,3 +22,5 @@ chmod +x estimate-peak-hour
 	sed 's/^zzzmisc/misc/' |
 	sort 
 ) > daily.csv
+
+cat daily.csv | ./map-counts | ../../../tippecanoe/tippecanoe -Bg -b10 -z12 -f -o pedestrians.mbtiles
