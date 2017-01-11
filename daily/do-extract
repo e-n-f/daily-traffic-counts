@@ -24,3 +24,4 @@ chmod +x estimate-peak-hour
 ) > daily.csv
 
 cat daily.csv | ./map-counts | ../../../tippecanoe/tippecanoe -Bg -b10 -z12 -f -o pedestrians.mbtiles
+mapbox-upload enf.6fzknzvu pedestrians.mbtiles
