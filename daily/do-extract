@@ -17,8 +17,10 @@ chmod +x estimate-peak-hour
 
 	cat ../../*/counts*csv | 
 	sed 's/^misc/zzzmisc/' |
+	awk -F, '{ if ($26 == "") { print "zzz" $0 } else { print "aaa" $0 }}' |
 	sort | uniq |
 	./estimate-peak-hour -24 |
+	sed 's/^...//' |
 	sed 's/^zzzmisc/misc/' |
 	sort 
 ) > daily.csv
