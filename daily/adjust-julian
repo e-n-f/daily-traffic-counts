@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+
+$pi = 4 * atan2(1, 1);
+
+$a = 1.25529;
+$b = 0.252424;
+$c = 540.675;
+
+while (<>) {
+	chomp;
+
+	($count, $julian, $rest) = split(/ /, $_, 3);
+	@fields = split(/,/, $rest);
+
+	$julian = $julian - int($julian);
+	$adjustment = $c / exp(log($a) * cos(($julian - $b) * 4 * $pi) + log($c));
+
+	for ($i = 0; $i < 4; $i++) {
+		$fields[$i + 5 + 12] *= $adjustment;
+	}
+
+	for ($i = 0; $i <= $#fields; $i++) {
+		print $fields[$i];
+		if ($i == $#fields) {
+			print "\n";
+		} else {
+			print ",";
+		}
+	}
+}

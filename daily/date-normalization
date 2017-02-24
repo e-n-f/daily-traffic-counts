@@ -4,3 +4,5 @@ cat daily.csv | ./mangle-dates | ../../kc-traffic-counts/sum-walk | awk '($1 > 0
 cat daily.julian | ./calc-medians > daily.medians
 
 gnuplot "plot.julian" > foo.ps
+
+cat daily.julian | ./adjust-julian > adjusted.csv
