@@ -1,0 +1,11 @@
+set terminal postscript
+set logscale y
+
+f(x) = exp(log(a) * cos((x - b) * 4 * pi) + log(c))
+a = 1.25529
+b = 0.252424
+c = 540.675
+
+fit f(x) "daily.medians" using 2:1 via a, b, c
+plot "daily.medians" using 2:1, f(x)
+plot "daily.medians" using 2:1, f(x), "daily.julian" using ($2 - int($2)):1 with dots

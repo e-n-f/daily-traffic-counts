@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+while (<>) {
+	($count, $date, $rest) = split(/ /, $_);
+
+	$date = $date - int($date);
+	$date = int($date * 48) / 48;
+
+	push @{$counts{$date}}, $count;
+}
+
+for $d (keys(%counts)) {
+	@c = @{$counts{$d}};
+	@c = sort { $a <=> $b } @c;
+	print "$c[$#c / 2] $d\n";
+}

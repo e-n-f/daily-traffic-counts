@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+@months = (
+	'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+);
+
+sub out {
+	if ($fields[3] =~ /(\d+)-(\d+)-(\d+)/) {
+		printf("%.5f ", $1 + ($2 - 1) / 12.0 + ($3 - 1) / 365.0);
+	} else {
+		die $fields[3];
+	}
+
+	for (my $i = 0; $i <= $#_; $i++) {
+		print "$_[$i],";
+	}
+	print "\n";
+}
+
+LINE:
+while (<>) {
+	chomp;
+	@fields = split(/,/);
+
+	if ($fields[3] =~ /(\d+)\/(\d+)\/(\d+)/) {
+		if ($3 > 1900) {
+			$fields[3] = "$3-$1-$2";
+			out(@fields);
+			next;
+		} elsif ($1 > 1900) {
+			$fields[3] = "$1-$2-$3";
+			out(@fields);
+			next;
+		} elsif ($3 < 100) {
+			if ($3 < 20) {
+				$fields[3] = sprintf("%04d-%02d-%02d", $3 + 2000, $1, $2);
+				out(@fields);
+				next;
+			} else {
+				$fields[3] = sprintf("%04d-%02d-%02d", $3 + 1900, $1, $2);
+				out(@fields);
+				next;
+			}
+		}
+	}
+
+	if ($fields[3] =~ /(\d+)-(\d+)-(\d+)/) {
+		if ($3 > 1900) {
+			$fields[3] = "$3-$2-$1";
+			out(@fields);
+			next;
+		} elsif ($1 > 1900) {
+			$fields[3] = "$1-$2-$3";
+			out(@fields);
+			next;
+		}
+	}
+
+	if ($fields[3] =~ /([A-Za-z]+)\.? +(\d+)\.?([A-Z]*) +(\d+)/) {
+		$y = $4;
+		$m = $1;
+		$d = $2;
+
+		for ($i = 0; $i <= $#months; $i++) {
+			if (substr($m, 0, 3) =~ /$months[$i]/i) {
+				$fields[3] = sprintf("%04d-%02d-%02d", $y, $i + 1, $d);
+				out(@fields);
+				next LINE;
+			}
+		}
+	}
+
+	print STDERR "?? $fields[3]\n";
+}

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cat daily.csv | ./mangle-dates | ../../kc-traffic-counts/sum-walk | awk '($1 > 0)' > daily.julian
+cat daily.julian | ./calc-medians > daily.medians
+
+gnuplot "plot.julian" > foo.ps
